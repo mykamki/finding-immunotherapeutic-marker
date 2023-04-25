@@ -20,6 +20,7 @@ bulk_map[47,2] <- "RS-03239001"
 bulk_map[90,1] <- "BACI165_2"
 bulk_map[90,2] <- "RS-03238964"
 
+# sort patients
 a <- data.frame(colnames(bulk_dataset)[2:ncol(bulk_dataset)], seq(1,90))
 colnames(a) <- c("rnaid", "no")
 a <- merge(a, bulk_map, by = "rnaid")
