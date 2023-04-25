@@ -21,7 +21,7 @@ cat("## The number of cell of sc_dataset : ", dim(sc_dataset)[2], " ##\n")
 
 
 ### 03. make Seurat object
-data <- CreateSeuratObject(counts = sc_dataset, project = args[2], min.cells = 3,  min.features= 200)
+data <- CreateSeuratObject(counts = sc_dataset, project = pid, min.cells = 3,  min.features= 200)
 
 
 
