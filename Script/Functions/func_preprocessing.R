@@ -19,6 +19,22 @@ extract_value2list <- function(value) {
   return(flatten_chr(ilist))
 }
 
+# remove duplicate in single cell dataset
+process_scdataset <- function(dataset) {
+	a <- dataset %>% group_by(Symbol) %>% summarize(n= n()) %>% filter(n>1)
+	idx <- list()
+	for (n in 1:length(a$Symbol)) {
+		b <- which(a$Symbol[n] == dataset$Symbol)[2]
+		idx <- append(b, idx)
+	}
+	idx <- as.double(flatten_chr(idx))
+	b <- dataset[!idx,]
+  c <- as.matrix(b[,-c(1,2)])
+	rownames(c) <- b$Symbol
+   colnames(c) <- colnames(b)[-c(1,2)]
+
+	return(c)
+}
 
  
  
