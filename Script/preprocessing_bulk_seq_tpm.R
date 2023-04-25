@@ -3,7 +3,7 @@
 library(data.table)
 library(dplyr)
 indir <- "../Data/"
-outdir <- "../Output/"
+outdir <- "../Output/BULK/"
 
 
 ### 01. Load bulk data
