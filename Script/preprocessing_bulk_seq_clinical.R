@@ -1,6 +1,7 @@
 #### Prepare the bulk phenotype ####
 library(data.table)
 library(dplyr)
+source("Functions/")
 indir <- ""
 outdir <- ""
 
