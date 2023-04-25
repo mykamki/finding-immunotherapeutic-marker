@@ -20,10 +20,10 @@ Rscript quality_control_single_seq_find_optimal_resolution.R ~/ANALYSIS/singlece
 
 
 # 4. input hyper-parameter for clustering
-Rscript 1_QC/qc04_clustering.R ~/ANALYSIS/singlecell/Rdata/sc1/ 10 1.6 ~/ANALYSIS/singlecell/Rdata/sc1/  
-Rscript 1_QC/qc04_clustering.R ~/ANALYSIS/singlecell/Rdata/sc2/ 10 0.5 ~/ANALYSIS/singlecell/Rdata/sc2/ 
-Rscript 1_QC/qc04_clustering.R ~/ANALYSIS/singlecell/Rdata/sc3/ 10 1.6 ~/ANALYSIS/singlecell/Rdata/sc3/ 
-Rscript 1_QC/qc04_clustering.R ~/ANALYSIS/singlecell/Rdata/sc4/ 10 0.5 ~/ANALYSIS/singlecell/Rdata/sc4/
-Rscript 1_QC/qc04_clustering.R ~/ANALYSIS/singlecell/Rdata/sc5/ 15 2.0 ~/ANALYSIS/singlecell/Rdata/sc5/ 
-Rscript 1_QC/qc04_clustering.R ~/ANALYSIS/singlecell/Rdata/sc6/ 10 4.0 ~/ANALYSIS/singlecell/Rdata/sc6/ 
-Rscript 1_QC/qc04_clustering.R ~/ANALYSIS/singlecell/Rdata/sc7/ 10 2.0 ~/ANALYSIS/singlecell/Rdata/sc7/
+Rscript quality_control_single_seq_clustering.R ../Output/SC1/ 10 1.6 
+Rscript quality_control_single_seq_clustering.R ../Output/SC2/ 10 0.5 
+Rscript quality_control_single_seq_clustering.R ../Output/SC3/ 10 1.6
+Rscript quality_control_single_seq_clustering.R ../Output/SC4/ 10 0.5 
+Rscript quality_control_single_seq_clustering.R ../Output/SC5/ 15 2.0 
+Rscript quality_control_single_seq_clustering.R ../Output/SC6/ 10 4.0 
+Rscript quality_control_single_seq_clustering.R ../Output/SC7/ 10 2.0 
