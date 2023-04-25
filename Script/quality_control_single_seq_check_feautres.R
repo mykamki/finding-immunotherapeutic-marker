@@ -1,8 +1,7 @@
 library(Seurat)
-indir <- ""
+indir <- "../Data/"
 pid <- ""
-outdir <- ""
-
+outdir <- "../Output/"
 
 
 ### 01. Load data 
@@ -43,3 +42,6 @@ dev.off()
 
 ### 06. save the results
 save(sc_dataset, file = paste0(outdir, "sc_dataset_count.RData"))
+
+
+
