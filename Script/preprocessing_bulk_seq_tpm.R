@@ -2,13 +2,13 @@
 ### 00. Setting
 library(data.table)
 library(dplyr)
-location <- ""
+indir <- ""
 outdir <- ""
 
 
 ### 01. Load bulk data
-bulk_dataset <- fread(paste0(location, "GSE176307_baci_rsem_RS_BACI_headers_tab.txt.gz"), header = T, data.table = F)
-bulk_map <- fread(paste0(location, "GSE176307_BACI_Omniseq_Sample_Name_Key_submitted_GEO_v2.csv.gz"), data.table = F)
+bulk_dataset <- fread(paste0(indir, "GSE176307_baci_rsem_RS_BACI_headers_tab.txt.gz"), header = T, data.table = F)
+bulk_map <- fread(paste0(indir, "GSE176307_BACI_Omniseq_Sample_Name_Key_submitted_GEO_v2.csv.gz"), data.table = F)
 bulk_dataset <- bulk_dataset[-1,]
 
 
