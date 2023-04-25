@@ -1,9 +1,9 @@
 # annotation marker to integrated dataset
 # outdir is "cell_type_ann_result"
-Rscript make_violin_plot_using_cell_markers.R ~/ANALYSIS/singlecell/Rdata/integ_3000_mt/dim30/
+Rscript make_violin_plot_using_cell_markers.R ../Output/INTEGRATION/
 
 # mannually
-vim ~/ANALYSIS/singlecell/Rdata/integ_3000_mt/dim30/cell_type_ann_result/cluster_ann.R 
+vim ../Output/INTEGRATION//cell_type_ann_result/cluster_ann.R 
 
 # re-assign cell type using cell-marker genes
 mkdir ~/ANALYSIS/singlecell/Rdata/integ_3000_mt/dim30/anned_data1 
