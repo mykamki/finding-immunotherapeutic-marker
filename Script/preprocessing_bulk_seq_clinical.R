@@ -1,9 +1,10 @@
-#### Prepare the bulk phenotype ####
+#!/usr/bin/env Rscript
+args <- commandArgs(trailingOnly = TRUE)
 library(data.table)
 library(dplyr)
 source("Functions/func_preprocessing.R")
-indir <- "../Data/"
-outdir <- "../Output/BULK/"
+indir <- args[1]
+outdir <- args[2]
 
 
 
