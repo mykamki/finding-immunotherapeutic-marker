@@ -2,10 +2,10 @@
 args <- commandArgs(trailingOnly = TRUE)
 library(Seurat)
 indir <- args[1]
-outdir <- args[2]
-min.nfeature <- as.double(args[3])
-max.nfeature <- as.double(args[4])
-max.mt <- as.double(args[5])
+outdir <- indir
+min.nfeature <- as.double(args[2])
+max.nfeature <- as.double(args[3])
+max.mt <- as.double(args[4])
 
 
 
