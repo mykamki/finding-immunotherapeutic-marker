@@ -1,6 +1,7 @@
 library(Seurat)
 indir <- ""
 pid <- ""
+outdir <- ""
 
 
 
@@ -9,39 +10,36 @@ sc_files <- list.files(path = location, pattern = paste0(pid, "_gene_cell_exprs_
 scdata <- fread(paste0(location, sc_files[1]))
 
 
-#### 2. remove duplicate ####
 
+### 02. processing data
 sc_dataset <- process_scdataset(scdata)
-
-
-process_scdataset <- function(dataset) {
-	a <- dataset%>% group_by(Symbol) %>% summarize(n= n()) %>% filter(n>1)
-	idx <- list()
-	for (n in 1:length(a$Symbol)) {
-		b <- which(a$Symbol[n] == dataset$Symbol)[2]
-		idx <- append(b, idx)
-	}
-	idx <- as.double(flatten_chr(idx))
-	b <- dataset[!idx,]
-  c <- as.matrix(b[,-c(1,2)])
-	rownames(c) <- b$Symbol
-   colnames(c) <- colnames(b)[-c(1,2)]
-
-	return(c)
-}
-
-number <- rev(strsplit(rev(strsplit(args[2], "/")[[1]])[1], "sc")[[1]])[1]
-
-cat("#####################################################\n")
 cat("## The number of gene of sc_dataset : ", dim(sc_dataset)[1], " ##\n")
 cat("## The number of cell of sc_dataset : ", dim(sc_dataset)[2], " ##\n")
-cat("#####################################################\n")
-save(sc_dataset, file = paste0(args[2], "sc_dataset_count.RData"))
 
 
-#### 3. Prepare for seurat format ####
-sc_dataset <- Seurat_preprocessing(sc_dataset, verbose = F)
+
+### 03. make Seurat object
+data <- CreateSeuratObject(counts = sc_dataset, project = args[2], min.cells = 3,  min.features= 200)
 
 
-#### 4. Save data ####
-save(sc_dataset,  file = paste0(args[2], "sc_dataset.RData"))
+### 04. make mitochondrial gene
+data[["percent.mt"]] <- PercentageFeatureSet(data, pattern = "^MT-") 
+
+
+### 05. plot the features
+# Visualize QC metrics as a violin plot
+pdf(file = paste0(outdir, "qcplot1.pdf"))
+VlnPlot(data, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+dev.off()
+  
+#FeatureScatter is typically used to visualize feature-feature relationships, but can be used
+#for anything calculated by the object, i.e. columns in object metadata, PC scores etc.
+plot1 <- FeatureScatter(data, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(data, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+pdf(file = paste0(outdir, "qcplot2.pdf"))
+plot1 + plot2 
+dev.off()
+
+
+### 06. save the results
+save(sc_dataset, file = paste0(outdir, "sc_dataset_count.RData"))
