@@ -47,6 +47,6 @@ dev.off()
 
 
 ### 06. save the results
-save(sc_dataset, file = paste0(outdir, "sc_dataset_count.RData"))
+save(sc_dataset, file = paste0(outdir, "sc_dataset.RData"))
 
 
