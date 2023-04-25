@@ -52,7 +52,7 @@ data1 <- IntegrateData(anchorset = integ_anchors,
 
 
 ### 04. Save the results
-save(data1, file = paste0(ourdir, "data1.RData"))
+save(data1, file = paste0(ourdir, "integrated_data1.RData"))
 
 
 
