@@ -1,7 +1,9 @@
+#!/usr/bin/env Rscript
+args <- commandArgs(trailingOnly = TRUE)
 library(Seurat)
-indir <- "../Data/"
-pid <- ""
-outdir <- "../Output/"
+indir <- args[1]
+pid <- args[2]
+outdir <- args[3]
 
 
 ### 01. Load data 
