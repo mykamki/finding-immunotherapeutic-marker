@@ -15,8 +15,8 @@ Rscript quality_control_single_seq_subset_and_normalization.R ../Output/SC7/ BC7
 
 
 # 3. input hyper-parameter for pca and find optimal resolution
-for n in {1..7};do Rscript 1_QC/qc03_find_optimal_resolution.R ~/ANALYSIS/singlecell/Rdata/sc$n/ 10 ~/ANALYSIS/singlecell/Rdata/sc$n/; done
-Rscript 1_QC/qc03_find_optimal_resolution.R ~/ANALYSIS/singlecell/Rdata/sc5/ 15 ~/ANALYSIS/singlecell/Rdata/sc5/
+for n in {1..7};do Rscript quality_control_single_seq_find_optimal_resolution.R ../Output/SC${n]/ 10 ~/ANALYSIS/singlecell/Rdata/sc$n/; done
+Rscript quality_control_single_seq_find_optimal_resolution.R ~/ANALYSIS/singlecell/Rdata/sc5/ 15 ~/ANALYSIS/singlecell/Rdata/sc5/
 
 
 # 4. input hyper-parameter for clustering
