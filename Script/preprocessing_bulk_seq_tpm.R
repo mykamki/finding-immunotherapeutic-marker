@@ -1,6 +1,7 @@
 #### Prepare the bulk data ####
 ### 00. Setting
 library(data.table)
+library(dplyr)
 location <- ""
 outdir <- ""
 
@@ -22,7 +23,7 @@ bulk_map[90,2] <- "RS-03238964"
 a <- data.frame(colnames(bulk_dataset)[2:ncol(bulk_dataset)], seq(1,90))
 colnames(a) <- c("rnaid", "no")
 a <- merge(a, bulk_map, by = "rnaid")
-a <- a%>%arrange(no)
+a <- a %>% arrange(no)
 colnames(bulk_dataset) <- c("V1", a$id)
 rownames(bulk_dataset) <- bulk_dataset$V1
 bulk_dataset <- bulk_dataset[,-1]
