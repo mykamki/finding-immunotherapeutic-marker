@@ -2,8 +2,8 @@
 ### 00. Setting
 library(data.table)
 library(dplyr)
-indir <- ""
-outdir <- ""
+indir <- "../Data/"
+outdir <- "../Output/"
 
 
 ### 01. Load bulk data
