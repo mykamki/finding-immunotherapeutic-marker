@@ -27,8 +27,24 @@ colnames(bulk_clinical) <- values
 rownames(bulk_clinical) <- as.vector(bulk_clinical[,1])
 bulk_clinical <- as.data.frame(bulk_clinical)
 
-
+# sort patients
 a <- data.frame(colnames(bulk_dataset), seq(1,90))
 colnames(a) <- c("Patient", "no")
 a <- merge(a, bulk_clinical, by = "Patient")
 bulk_clinical <- a %>% arrange(no)
+
+
+
+### 03. Make phenotype data for scissor 
+bulk_survival <- bulk_clinical[, c("Patient", "overall survival", "alive")]
+colnames(bulk_survival) <- c("id", "time", "status")
+bulk_survival$time <- as.double(bulk_survival$time)
+bulk_survival$status <- ifelse(bulk_survival$status == "No", 1, 0)
+
+
+
+### 04. Save data ####
+save(phenotype, file = paste0(args[2], "phenotype.RData"))
+save(bulk_clinical, file = paste0(args[2], "bulk_clinical.RData"))
+
+
