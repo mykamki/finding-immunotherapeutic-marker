@@ -51,8 +51,15 @@ data1 <- IntegrateData(anchorset = integ_anchors,
 
 
 
-### 04. Save the results
-save(data1, file = paste0(ourdir, "integrated_data1.RData"))
+### 04. Run PCA and save elbowplot
+data1 <- RunPCA(object = data1, features = VariableFeatures(object = data1))
+pdf(file = paste0(outdir, "elbowplot.pdf"))
+ElbowPlot(data1, ndims= 50)
+dev.off()
+
+
+### 05. Save the results
+save(data1, file = paste0(ourdir, "normalized_data1.RData"))
 
 
 
