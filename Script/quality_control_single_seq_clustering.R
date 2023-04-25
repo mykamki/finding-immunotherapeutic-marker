@@ -6,7 +6,7 @@ library(dplyr)
 indir <- args[1]
 max.dim <- as.double(args[2])
 opt.resol <- as.double(args[3])
-outdir <- args[4]
+outdir <- indir
 
 
 
