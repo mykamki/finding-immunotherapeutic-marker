@@ -1,7 +1,7 @@
 #### Prepare the bulk phenotype ####
 library(data.table)
 library(dplyr)
-source("Functions/")
+source("Functions/func_preprocessing.R")
 indir <- ""
 outdir <- ""
 
