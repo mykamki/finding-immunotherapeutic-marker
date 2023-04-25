@@ -8,7 +8,7 @@ library(boot)
 library(ggplot2)
 indir <- args[1]
 max.dim <- as.double(args[2])
-outdir <- args[3]
+outdir <- indir
 
 
 
