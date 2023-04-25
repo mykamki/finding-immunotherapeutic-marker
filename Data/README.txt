@@ -1,2 +1,2 @@
-# data
-
+# GSE176307
+Rose TL, Weir WH, Mayhew GM, Shibata Y, Eulitt P, Uronis JM, Zhou M, Nielsen M, Smith AB, Woods M, Hayward MC, Salazar AH, Milowsky MI, Wobker SE, McGinty K, Millburn MV, Eisner JR, Kim WY. Fibroblast growth factor receptor 3 alterations and response to immune checkpoint inhibition in metastatic urothelial cancer: a real world experience. Br J Cancer. 2021 Oct;125(9):1251-1260. doi: 10.1038/s41416-021-01488-6. Epub 2021 Jul 22. Erratum in: Br J Cancer. 2022 May;126(8):1237. PMID: 34294892; PMCID: PMC8548561.
