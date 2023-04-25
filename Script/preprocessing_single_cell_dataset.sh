@@ -1,7 +1,7 @@
 # preprocessing sc data
 
 # 1. make count dataset
-for n in {1..7};do Rscript 02_prepare_a_scdata.R ../Data/ SC${n} ../Output/SC${n]/; done
+for n in {1..7};do Rscript quality_control_single_seq_check_feautres.R ../Data/ SC${n} ../Output/SC${n]/; done
 
 # 1. make dataset and check nFeature for determine minimal cell counts
 for n in {1..7};do Rscript 1_QC/qc01_check_nFeature.R ~/ANALYSIS/singlecell/Rdata/sc$n/ BC$n ~/ANALYSIS/singlecell/Rdata/sc$n/; done
