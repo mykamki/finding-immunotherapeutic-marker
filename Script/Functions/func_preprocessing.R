@@ -36,5 +36,11 @@ process_scdataset <- function(dataset) {
 	return(c)
 }
 
- 
- 
+#  make median statistic
+med <- function(data, indices) {
+    resample <- data[indices]
+    return(median(resample))
+  }
+  
+
+
