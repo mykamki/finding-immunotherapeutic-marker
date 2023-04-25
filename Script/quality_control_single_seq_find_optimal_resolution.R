@@ -8,3 +8,10 @@ library(ggplot2)
 indir <- args[1]
 
 
+
+### 01. load data
+load(file = paste0(indir, "normalized_data1.RData"))
+
+
+
+
