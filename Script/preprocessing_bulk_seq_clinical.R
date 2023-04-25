@@ -2,8 +2,8 @@
 library(data.table)
 library(dplyr)
 source("Functions/func_preprocessing.R")
-indir <- ""
-outdir <- ""
+indir <- "../Data/"
+outdir <- "../Output/"
 
 
 
