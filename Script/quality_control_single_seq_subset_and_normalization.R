@@ -1,9 +1,11 @@
-
+#!/usr/bin/env Rscript
+args <- commandArgs(trailingOnly = TRUE)
 library(Seurat)
+indir <- args[1]
 
 
 #### 01. Load data ####
-load(file = paste0(args[1], "sc_dataset_count.RData"))
+load(file = paste0(indir, "sc_dataset_count.RData"))
 data <- CreateSeuratObject(counts = sc_dataset, project = args[2], min.cells = 3,  min.features= 200) # make Seurat object
 data[["percent.mt"]] <- PercentageFeatureSet(data, pattern = "^MT-") # make mitochondrial gene
 
