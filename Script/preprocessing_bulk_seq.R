@@ -31,6 +31,11 @@ colnames(bulk_dataset) <- c("V1", a$id)
 rownames(bulk_dataset) <- bulk_dataset$V1
 bulk_dataset <- bulk_dataset[,-1]
 
+# prepare bulk dataset
+bulk_name <- rownames(bulk_dataset)
+bulk_dataset <- sapply(bulk_dataset, as.double)
+rownames(bulk_dataset) <- bulk_name
+
 
 
 ### 03. Preprocessing clinical data
