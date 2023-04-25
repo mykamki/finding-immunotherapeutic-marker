@@ -3,7 +3,7 @@ library(data.table)
 library(dplyr)
 source("Functions/func_preprocessing.R")
 indir <- "../Data/"
-outdir <- "../Output/"
+outdir <- "../Output/BULK/"
 
 
 
