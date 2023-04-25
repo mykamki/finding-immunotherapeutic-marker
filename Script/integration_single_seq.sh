@@ -15,6 +15,6 @@ Rscript quality_control_single_seq_find_optimal_resolution.R ../Output/INTEGRATI
 
 
 # 03. Do clustering
-Rscript 2_INTEGRATION/integ05_clustering.R ~/ANALYSIS/singlecell/Rdata/integ_3000_mt/ 30 1 ~/ANALYSIS/singlecell/Rdata/integ_3000_mt/dim30/
+Rscript quality_control_single_seq_clustering.R ../Output/INTEGRATION/ 30 1 
 
 
