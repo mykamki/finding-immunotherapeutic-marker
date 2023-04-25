@@ -6,6 +6,7 @@ pid <- args[2]
 outdir <- args[3]
 
 
+
 ### 01. Load data 
 sc_files <- list.files(path = location, pattern = paste0(pid, "_gene_cell_exprs_table"))
 scdata <- fread(paste0(location, sc_files[1]))
@@ -23,8 +24,10 @@ cat("## The number of cell of sc_dataset : ", dim(sc_dataset)[2], " ##\n")
 data <- CreateSeuratObject(counts = sc_dataset, project = args[2], min.cells = 3,  min.features= 200)
 
 
+
 ### 04. make mitochondrial gene
 data[["percent.mt"]] <- PercentageFeatureSet(data, pattern = "^MT-") 
+
 
 
 ### 05. plot the features
@@ -42,8 +45,8 @@ plot1 + plot2
 dev.off()
 
 
+
 ### 06. save the results
 save(sc_dataset, file = paste0(outdir, "sc_dataset_count.RData"))
-
 
 
