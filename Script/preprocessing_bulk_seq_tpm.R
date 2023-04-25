@@ -1,9 +1,9 @@
-#### Prepare the bulk data ####
-### 00. Setting
+#!/usr/bin/env Rscript
+args <- commandArgs(trailingOnly = TRUE)
 library(data.table)
 library(dplyr)
-indir <- "../Data/"
-outdir <- "../Output/BULK/"
+indir <- args[1]
+outdir <- args[2]
 
 
 ### 01. Load bulk data
