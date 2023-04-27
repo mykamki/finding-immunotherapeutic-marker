@@ -1,6 +1,6 @@
 
 mkdir $outdir
-Rscript run_scissor.R ../ ~/ANALYSIS/singlecell/Rdata/integ_3000_mt/dim30/rm_epi/preprocessed_data1.RData null ~/ANALYSIS/singlecell/RESULT/GSE176307/BACI165_2/
+Rscript run_scissor.R ../Output/BULK/ ../Output/INTEGRATION/~/ANALYSIS/singlecell/Rdata/integ_3000_mt/dim30/rm_epi/preprocessed_data1.RData null ~/ANALYSIS/singlecell/RESULT/GSE176307/BACI165_2/
 [1] "|**************************************************|"
 [1] "Performing quality-check for the correlations"
 [1] "The five-number summary of correlations:"
