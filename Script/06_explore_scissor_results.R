@@ -109,8 +109,19 @@ dev.off()
 
 
 ### 06. Plot Which type of cell of scissor cell results ###
+cell.name <- names(my_cluster_ann)
+data1.new.idents <- case_when(
+                      Idents(data1) %in% my_cluster_ann[[1]] ~  cell.name[1],
+                      Idents(data1) %in% my_cluster_ann[[2]] ~  cell.name[2],
+                      Idents(data1) %in% my_cluster_ann[[3]] ~  cell.name[3],
+                      Idents(data1) %in% my_cluster_ann[[4]] ~  cell.name[4],
+                      Idents(data1) %in% my_cluster_ann[[5]] ~  cell.name[5],
+                      Idents(data1) %in% my_cluster_ann[[6]] ~  cell.name[6],
+                      TRUE ~ NA_character_
+                      )
+
 ###... 06-1. annotation clusters ###
-# re-clustering
+# re-clustering for cluster 11
 data2 <- subset(data1, idents = "11")
 data2 <- RunPCA(data2, features= VariableFeatures(data2))
 data2 <- FindNeighbors(object = data2, dims = 1:10)
@@ -126,21 +137,12 @@ data1.new.idents[idxbcell] <- "B_cell"
 data1.new.idents[idxtcell] <- "T_cell"
 Idents(data1) <- data1.new.idents
 
-
-cell.name <- names(my_cluster_ann)
-data1.new.idents <- case_when(
-                      Idents(data1) %in% my_cluster_ann[[1]] ~  cell.name[1],
-                      Idents(data1) %in% my_cluster_ann[[2]] ~  cell.name[2],
-                      Idents(data1) %in% my_cluster_ann[[3]] ~  cell.name[3],
-                      Idents(data1) %in% my_cluster_ann[[4]] ~  cell.name[4],
-                      Idents(data1) %in% my_cluster_ann[[5]] ~  cell.name[5],
-                      Idents(data1) %in% my_cluster_ann[[6]] ~  cell.name[6],
-                      TRUE ~ NA_character_
-                      )
-Idents(data1) <- data1.new.idents
 data1[["CellName"]] <- colnames(data1) # create cell names as metadata colum
+save(data1, file = paste0(indir, "annotated_data1.RData"))
+
 
 ###... 06-1. Subset Myeloid macrophage ###
+# re-clustering for myeloid_macrophage
 data3 <- subset(data1, idents = "Myeloid_macrophage")
 
 selection.method = "vst"
