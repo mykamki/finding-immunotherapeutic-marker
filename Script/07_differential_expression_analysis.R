@@ -93,6 +93,11 @@ my_vlnplot_for_neg_degene <- function(dt, gene) {
   scale_x_discrete(labels = c("",""))
 }
 
+my_umap_for_neg_degene <- function(dt, gene) {
+  FeaturePlot(dt, features = gene)
+}
+
+
 # "SSR4" "RGS1" "HLA-DRB5" "APOE" "C1QB"  "C1QA"  "APOC1"  "JCHAIN"  "C1QC"  "DERL3"   
 
 p1 <- my_vlnplot_for_neg_degene(data_group, "SSR4")
@@ -117,8 +122,6 @@ extract_legend <- function(my_ggp) {
 }
 
 shared_legend <- extract_legend(p1)
-
-png(
 grid.arrange(
 p1 + theme(legend.position='hidden'),
 p2 + theme(legend.position='hidden'),
@@ -133,49 +136,31 @@ p10 + theme(legend.position='hidden'),
   top = shared_legend$grobs[[1]])
 
 
-  (pF1,pF2,pF3,pF4,pF5,pF6, bottom =shared_legend$grobs[[1]], 
-ncol =3, nrow = 2)
+p1 <- my_umap_for_neg_degene(data1, "SSR4")
+p2 <- my_umap_for_neg_degene(data1, "RGS1")
+p3 <- my_umap_for_neg_degene(data1, "HLA-DRB5")
+p4 <- my_umap_for_neg_degene(data1, "APOE")
+p5 <- my_umap_for_neg_degene(data1, "C1QB")
 
-                        
+p6 <- my_umap_for_neg_degene(data1, "C1QA")
+p7 <- my_umap_for_neg_degene(data1, "APOC1")
+p8 <- my_umap_for_neg_degene(data1, "JCHAIN")
+p9 <- my_umap_for_neg_degene(data1, "C1QC")
+p10 <- my_umap_for_neg_degene(data1, "DERL3")
 
-pF1 <- VlnPlot(data2 , features="JCHAIN" , group.by = "group1",pt.size = 0, y.max = 8)+
-theme(legend.position = "bottom")+scale_fill_manual(values = c('grey','royalblue'), 
-labels = c("others", "Scissor- cells"))+
-geom_signif(comparisons = list(c("0","1")),map_signif_level = TRUE, y_position =7.5)+
-theme(axis.title.x=element_blank()) + 
-scale_x_discrete(labels = c("",""))
+shared_legend <- extract_legend(p4)
+grid.arrange(
+p1 + theme(legend.position='hidden'),
+p2 + theme(legend.position='hidden'),
+p3 + theme(legend.position='hidden'),
+p4 + theme(legend.position='hidden'),
+p5 + theme(legend.position='hidden'),
+p6 + theme(legend.position='hidden'),
+p7 + theme(legend.position='hidden'),
+p8 + theme(legend.position='hidden'),
+p9 + theme(legend.position='hidden'),
+p10 + theme(legend.position='hidden'), 
+  right = shared_legend$grobs[[1]])
 
-pF2 <- VlnPlot(data2 , features="SSR4" , group.by = "group1",pt.size = 0, y.max = 8)+
-theme(legend.position = "bottom")+scale_fill_manual(values = c('grey','royalblue'), 
-labels = c("others", "Scissor- cells"))+
-geom_signif(comparisons = list(c("0","1")),map_signif_level = TRUE, y_position =7.5)+
-theme(axis.title.x=element_blank()) + 
-scale_x_discrete(labels = c("",""))
-
-pF3 <- VlnPlot(data2 , features="CD74" , group.by = "group1",pt.size = 0, y.max = 8)+
-theme(legend.position = "bottom")+scale_fill_manual(values = c('grey','royalblue'), 
-labels = c("others", "Scissor- cells"))+
-geom_signif(comparisons = list(c("0","1")),map_signif_level = TRUE, y_position =7.5)+
-theme(axis.title.x=element_blank()) + 
-scale_x_discrete(labels = c("",""))
-
-pF4 <- VlnPlot(data2 , features="HLA-DPA1" , group.by = "group1",pt.size = 0, y.max = 8)+
-theme(legend.position = "bottom")+scale_fill_manual(values = c('grey','royalblue'), 
-labels = c("others", "Scissor- cells"))+
-geom_signif(comparisons = list(c("0","1")),map_signif_level = TRUE, y_position =7.5)+
-theme(axis.title.x=element_blank()) + 
-scale_x_discrete(labels = c("",""))
-
-pF5 <- VlnPlot(data2 , features="HLA-DRA" , group.by = "group1",pt.size = 0, y.max = 8)+
-theme(legend.position = "bottom")+scale_fill_manual(values = c('grey','royalblue'), 
-labels = c("others", "Scissor- cells"))+
-geom_signif(comparisons = list(c("0","1")),map_signif_level = TRUE, y_position =7.5)+
-theme(axis.title.x=element_blank()) + 
-scale_x_discrete(labels = c("",""))
-
-pF6 <- VlnPlot(data2 , features="RGS1" , group.by = "group1",pt.size = 0, y.max = 8)+
-theme(legend.position = "bottom")+scale_fill_manual(values = c('grey','royalblue'), 
-labels = c("others", "Scissor- cells"))+
-ㄴtheme(axis.title.x=element_blank()) + 
-scale_x_discrete(labels = c("",""))
+    
 
