@@ -30,7 +30,13 @@ Idents(data1) <- celltypes
 
 
 
+### 05. Do DE analysis
 myident1 <- "neg_scissor"
 others <- c("T_cell", "B_cell", "Myeloid_macrophage", "Fibroblast", "other", "Endothelial_cell")  
 de.neg <- FindMarkers(data1, ident.1 = myident1, ident.2 = others, test.use = "DESeq2")
 de.neg <- test_de_cutoff(de.neg, 1.5)
+save(de.neg, file = paste0(indir, "negcell.de.result.RData"))
+write.csv(de.neg, file = paste0(indir, "scissor_negative_de_result.csv"), row.names = F, quote = F)
+
+
+### 06. Vocano plot
