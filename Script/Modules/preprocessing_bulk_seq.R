@@ -9,19 +9,11 @@ outdir <- args[2]
 
 ### 01. Load bulk data
 bulk_metadata <- fread(paste0(indir, "GSE176307_series_matrix.txt.gz"), sep = "\t", fill = TRUE) 
-bulk_dataset <- fread(paste0(indir, "GSE176307_BACI_tpm_gene.matrix.tsv.gz"))
+bulk_dataset <- fread(paste0(indir, "GSE176307_BACI_tpm_gene.matrix.tsv.gz"), data.table = F)
 
 
 
-bulk_dataset <- fread(paste0(indir, "GSE176307_baci_rsem_RS_BACI_headers_tab.txt.gz"), header = T, data.table = F)
-bulk_map <- fread(paste0(indir, "GSE176307_BACI_Omniseq_Sample_Name_Key_submitted_GEO_v2.csv.gz"), data.table = F)
-bulk_dataset <- bulk_dataset[-1,]
-
-
-
-
-
-### 03. Preprocessing clinical data
+### 02. Preprocessing clinical data
 # The list of values for extract the metadataset
 values <- c("Patient", "gender", "race", "ethnicity", "age", "smoking status" , "histology", "histology.other.description", 
   "t.stage.at.diagnosis", "n.stage.at.diagnosis" , "d.stage.at.diagnosis", "pack.years" , "overall survival",
@@ -37,33 +29,23 @@ colnames(bulk_clinical) <- values
 rownames(bulk_clinical) <- as.vector(bulk_clinical[,1])
 bulk_clinical <- as.data.frame(bulk_clinical)
 
-# sort patients
-a <- data.frame(colnames(bulk_dataset), seq(1,90))
-colnames(a) <- c("Patient", "no")
-a <- merge(a, bulk_clinical, by = "Patient")
-bulk_clinical <- a %>% arrange(no)
+# remove dulplicate patient (BACI165)
+#grep("165",bulk_clinical$Patient) #47 48
+bulk_clinical <- bulk_clinical[-48,]
+bulk_clinical$Patient <- ifelse(bulk_clinical$Patient == "BACI165_1", "BACI165", bulk_clinical$Patient)
 
 
 
-
-### 04. Make phenotype data for scissor 
-bulk_survival <- bulk_clinical[, c("Patient", "overall survival", "alive")]
-colnames(bulk_survival) <- c("id", "time", "status")
-bulk_survival$time <- as.double(bulk_survival$time)
-bulk_survival$status <- ifelse(bulk_survival$status == "No", 1, 0)
-
-
-
-### 05. Remove duplicated patients
-ix <- which(colnames(bulk_dataset) %in% "BACI165_2")
-bulk_dataset <- bulk_dataset[,-ix]
-phenotype <- phenotype[-ix,]
+### 03. Preprocessing tpm data
+# sort patients by clinical data order
+genenames <- bulk_dataset$V1
+bulk_dataset <- bulk_dataset[,bulk_clinical$Patient]
+rownames(bulk_dataset) <- genenames
 
 
 
-### 06. Save data ####
+### 04. Save data ####
 save(bulk_dataset, file = paste0(outdir, "bulk_dataset.RData"))
-save(phenotype, file = paste0(args[2], "phenotype.RData"))
-save(bulk_clinical, file = paste0(args[2], "bulk_clinical.RData"))
+save(bulk_clinical, file = paste0(outdir, "bulk_clinical.RData"))
 
 
