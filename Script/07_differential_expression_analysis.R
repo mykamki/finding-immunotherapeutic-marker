@@ -23,10 +23,10 @@ neg_cell_names <- infos1$Scissor_neg
 
 
 ### 04. Identify scissor cells 
-cellnames <- names(Idents(data1))
-cellnames[names(Idents(data1)) %in% neg_cell_names] <- "neg_scissor"
-cellnames[names(Idents(data1)) %in% pos_cell_names ] <- "pos_scissor"
-Idents(data1) <- cellnames
+celltypes <- as.vector(Idents(data1))
+celltypes[names(Idents(data1)) %in% neg_cell_names] <- "neg_scissor"
+celltypes[names(Idents(data1)) %in% pos_cell_names ] <- "pos_scissor"
+Idents(data1) <- celltypes
 
 
 
