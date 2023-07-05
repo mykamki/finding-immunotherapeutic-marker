@@ -7,7 +7,7 @@ vim ../Output/INTEGRATION/cell_type_ann_result/cluster_ann.R
 
 # re-assign cell type using cell-marker genes and extract just immune cells
 mkdir ../Output/INTEGRATION/IMMUNE/
-Rscript remove_specific_cell_type.R ../Output/INTEGRATION/../Output/INTEGRATION/cell_type_ann_result/cluster_ann.R Epithelial_cell ../Output/INTEGRATION/IMMUNE/
+Rscript Modules/remove_specific_cell_type.R ../Output/INTEGRATION/../Output/INTEGRATION/cell_type_ann_result/cluster_ann.R Epithelial_cell ../Output/INTEGRATION/IMMUNE/
 
 ####################################################
 #### Before removing  Epithelial_cell  :  36300 ####
