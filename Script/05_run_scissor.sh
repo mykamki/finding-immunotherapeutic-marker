@@ -1,6 +1,6 @@
 
 mkdir ../Output/SCISSOR/
-Rscript run_scissor.R ../Output/BULK/ ../Output/INTEGRATION/IMMUNE/preprocessed_data1.RData ../Output/SCISSOR/
+Rscript Modules/run_scissor.R ../Output/BULK/ ../Output/INTEGRATION/IMMUNE/preprocessed_data1.RData ../Output/SCISSOR/
 
 #[1] "|**************************************************|"
 #[1] "Performing quality-check for the correlations"
