@@ -8,6 +8,9 @@ args <- commandArgs(trailingOnly = TRUE)
 library(Seurat)
 library(dplyr)
 library(DESeq2)
+library(ggplot2)
+library(ggrepel)
+
 
 
 ### 02. Load data
@@ -40,3 +43,7 @@ write.csv(de.neg, file = paste0(indir, "scissor_negative_de_result.csv"), row.na
 
 
 ### 06. Vocano plot
+
+
+
+
