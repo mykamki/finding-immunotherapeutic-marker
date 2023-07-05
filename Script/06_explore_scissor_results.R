@@ -3,6 +3,7 @@
 
 
 ### 01. Setting
+source("Script/Functions/func_exploring.R")
 args <- commandArgs(trailingOnly = TRUE)
 library(Scissor)
 library(ggplot2)
