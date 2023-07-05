@@ -35,11 +35,11 @@ get_top10 <- function(de.res) {
   top_genes <- bind_rows(
   de.res %>% 
     filter(expression == 'Up-regulated') %>% 
-    arrange(p_val_adj, desc(abs(avg_log2FC))) %>% 
+    arrange(desc(abs(avg_log2FC)), p_val_adj) %>% 
     head(top),
   de.res %>% 
     filter(expression == 'Down-regulated') %>% 
-    arrange(p_val_adj, desc(abs(avg_log2FC))) %>% 
+    arrange(desc(abs(avg_log2FC)), p_val_adj) %>% 
     head(top)
   )    
   top_genes <- top_genes %>% mutate (Genes = rownames(top_genes))
