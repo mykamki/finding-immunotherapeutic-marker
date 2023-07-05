@@ -15,3 +15,18 @@ make_celltype_n <- function(which_scissor_cell) {
 	df2$name <- gsub("_", " ", df2$CellType, fixed = T)
 	return(df2)
 	}
+
+
+test_de_cutoff <- function(de, threshold) {
+catego_updown <- function(de.res) {
+  de.res <- de.res %>%
+    mutate(
+    expression = case_when(avg_log2FC >= threshold & p_val_adj <= 0.05 ~ "Up-regulated",
+                           avg_log2FC <= -threshold & p_val_adj <= 0.05 ~ "Down-regulated",
+                           TRUE ~ "Unchanged")
+    )
+  return(de.res)
+}
+de <- catego_updown(de)
+}
+
