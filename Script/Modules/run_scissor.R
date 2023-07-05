@@ -5,7 +5,7 @@ library(data.table)
 library(dplyr)
 library(purrr)
 indir_bulk <- args[1]
-indir_sc <- args[2]
+scdata <- args[2]
 outdir <- args[3]
 
 
@@ -32,7 +32,7 @@ phenotype <- phenotype[,c("time","status")]
 
 
 ### 03. Load scdata 
-load(file = paste0(indir_sc, "preprocessed_data1.RData"))
+load(sc_data)
 
 
 
