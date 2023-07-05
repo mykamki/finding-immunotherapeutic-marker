@@ -72,7 +72,7 @@ cell_group_df$group2 <- ifelse(cell_group_df$celltype == "pos_scissor", 1, 0)
 data1[["group1"]] <- cell_group_df$group1 # create cell names as metadata colum
 data1[["group2"]] <- cell_group_df$group2 # create cell names as metadata colum
 data1[["group3"]] <- ifelse(cell_group_df$group1 == 1, 2, 
-												ifelse(cell_group_df$group2 == 1, 1, 0))
+	ifelse(cell_group_df$group2 == 1, 1, 0))
 
 #table(data1[["group3"]])
 #group3
