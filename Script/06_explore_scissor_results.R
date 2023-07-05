@@ -150,7 +150,7 @@ data2 <- FindClusters( object = data2 , resolution = resolution, verbose = verbo
 data2 <- RunTSNE(object = data2 , dims = dims_TSNE)
 data2 <- RunUMAP(object = data2 , dims = dims_UMAP, verbose = verbose)
 
-### ...06-2. Check subpopulation of myeloid marcrophage ###
+### ...06-2. Check subpopulation of myeloid macrophage ###
 DimPlot(data2, reduction = "umap") # subpopulation of myeloid marcrophage (5 clusters)
 
 # https://www.cusabio.com/c-20938.html
@@ -169,7 +169,7 @@ VlnPlot(data2, features = c(M1marker, M2marker, momarker) , pt.size = 0, ncol =2
 # cluster 1,2,4 : M1/M2
 # cluster 3 : M1
 
-###...06-3. The umap visualization of myeloid marcrophage subset ###
+###...06-3. The umap visualization of myeloid macrophage subset ###
 Scissor_select <- rep(0, ncol(data2))
 names(Scissor_select) <- colnames(data2)
 Scissor_select[infos1$Scissor_pos] <- 1
