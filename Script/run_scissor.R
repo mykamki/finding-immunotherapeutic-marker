@@ -11,11 +11,25 @@ outdir <- args[3]
 
 ### 01. Load bulk data
 load(file = paste0(indir_bulk, "bulk_dataset.RData"))
-load(file = paste0(indir_bulk, "phenotype.RData"))
+load(file = paste0(indir_bulk, "bulk_clinical.RData"))
 
 
 
-### 02. Load scdata 
+
+### 02. Make phenotype data
+phenotype <- bulk_clinical[,c("Patient", "overall survival", "alive")]
+colnames(phenotype) <- c("ID","time","status")
+phenotype$status <- ifelse(phenotype$status == "No", 1, 0)
+phenotype$time <- as.double(phenotype$time)
+
+# check whether bulk_dataset colname matched with phenotype ID
+identical(phenotype$ID , colnames(bulk_dataset))
+rownames(phenotype) <- phenotype$ID
+phenotype <- phenotype[,c("time","status")]
+
+
+
+### 03. Load scdata 
 load(file = paste0(indir_sc, "preprocessed_data1.RData"))
 
 
@@ -36,10 +50,11 @@ data1 <- FindNeighbors(object = data1, dims = dims_Neighbors, verbose = verbose)
 data1 <- FindClusters( object = data1, resolution = resolution, verbose = verbose)
 data1 <- RunTSNE(object = data1, dims = dims_TSNE)
 data1 <- RunUMAP(object = data1, dims = dims_UMAP, verbose = verbose)
-  
+sc_dataset <- data1
 
 
 ### 03. Execute Scissor to select the informative cells 
+bulk_dataset <- as.matrix(bulk_dataset)
 alp <- NULL
 infos1 <- Scissor(bulk_dataset, sc_dataset, phenotype, alpha = alp, 
                  family = "cox", Save_file = paste0(outdir, 'Scissor_Bladder_survival.RData'))
@@ -47,7 +62,7 @@ infos1 <- Scissor(bulk_dataset, sc_dataset, phenotype, alpha = alp,
 
 
 ### 04. Save the results
-save(data1, file = paste0(outdir, 'preprocessed_data1.RData'))
+save(sc_dataset, file = paste0(outdir, 'sc_dataset.RData'))
 save(infos1, file = paste0(outdir, 'infos1.RData'))
 
 
