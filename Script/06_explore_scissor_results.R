@@ -110,6 +110,23 @@ dev.off()
 
 ### 06. Plot Which type of cell of scissor cell results ###
 ###... 06-1. annotation clusters ###
+# re-clustering
+data2 <- subset(data1, idents = "11")
+data2 <- RunPCA(data2, features= VariableFeatures(data2))
+data2 <- FindNeighbors(object = data2, dims = 1:10)
+data2 <- FindClusters(object = data2, resolution = 0.6)
+data2 <- RunUMAP(object = data2, dims = 1:10)                    
+
+bcell_names_in11 <- Idents(data2)[Idents(data2) == "0"] %>% names()                      
+tcell_names_in11 <- Idents(data2)[Idents(data2) == "1"] %>% names()  
+
+idxbcell <- names(Idents(data1)) %in% bcell_names_in11
+idxtcell <- names(Idents(data1)) %in% tcell_names_in11
+data1.new.idents[idxbcell] <- "B_cell"
+data1.new.idents[idxtcell] <- "T_cell"
+Idents(data1) <- data1.new.idents
+
+
 cell.name <- names(my_cluster_ann)
 data1.new.idents <- case_when(
                       Idents(data1) %in% my_cluster_ann[[1]] ~  cell.name[1],
@@ -124,7 +141,7 @@ Idents(data1) <- data1.new.idents
 data1[["CellName"]] <- colnames(data1) # create cell names as metadata colum
 
 ###... 06-1. Subset Myeloid macrophage ###
-data2 <- subset(data1, idents = "Myeloid_macrophage")
+data3 <- subset(data1, idents = "Myeloid_macrophage")
 
 selection.method = "vst"
 resolution = 0.6
@@ -133,16 +150,16 @@ dims_TSNE = 1:10
 dims_UMAP = 1:10
 verbose = TRUE
 DefaultAssay(data2) <- "RNA"
-data2 <- FindVariableFeatures(object = data2 , selection.method = selection.method, verbose = verbose)
-data2 <- ScaleData(object = data2 , verbose = verbose)
-data2 <- RunPCA(object = data2, features = VariableFeatures(data2), verbose = verbose)
-data2 <- FindNeighbors(object = data2 , dims = dims_Neighbors, verbose = verbose)
-data2 <- FindClusters( object = data2 , resolution = resolution, verbose = verbose)
-data2 <- RunTSNE(object = data2 , dims = dims_TSNE)
-data2 <- RunUMAP(object = data2 , dims = dims_UMAP, verbose = verbose)
+data3 <- FindVariableFeatures(object = data3 , selection.method = selection.method, verbose = verbose)
+data3 <- ScaleData(object = data3, verbose = verbose)
+data3 <- RunPCA(object = data3, features = VariableFeatures(data3), verbose = verbose)
+data3 <- FindNeighbors(object = data3 , dims = dims_Neighbors, verbose = verbose)
+data3 <- FindClusters( object = data3 , resolution = resolution, verbose = verbose)
+data3 <- RunTSNE(object = data3 , dims = dims_TSNE)
+data3 <- RunUMAP(object = data3 , dims = dims_UMAP, verbose = verbose)
 
 ### ...06-2. Check subpopulation of myeloid macrophage ###
-DimPlot(data2, reduction = "umap") # subpopulation of myeloid marcrophage (5 clusters)
+DimPlot(data3, reduction = "umap") # subpopulation of myeloid marcrophage (5 clusters)
 
 # https://www.cusabio.com/c-20938.html
 # (source CD36)https://www.frontiersin.org/articles/10.3389/fimmu.2019.02035/full 
@@ -152,20 +169,20 @@ DimPlot(data2, reduction = "umap") # subpopulation of myeloid marcrophage (5 clu
 M1marker = c("CD40", "CD86")
 M2marker = c("CD163", "MS4A4A")
 momarker = c("CD36")
-VlnPlot(data2, features = momarker, pt.size = 0)
-VlnPlot(data2, features = M1marker , pt.size = 0)
-VlnPlot(data2, features = M2marker , pt.size = 0)
-VlnPlot(data2, features = c(M1marker, M2marker, momarker) , pt.size = 0, ncol =2)
+VlnPlot(data3, features = momarker, pt.size = 0)
+VlnPlot(data3, features = M1marker , pt.size = 0)
+VlnPlot(data3, features = M2marker , pt.size = 0)
+VlnPlot(data3, features = c(M1marker, M2marker, momarker) , pt.size = 0, ncol =2)
 # cluster 0 : monocyte
 # cluster 1,2,4 : M1/M2
 # cluster 3 : M1
 
 ###...06-3. The umap visualization of myeloid macrophage subset ###
-Scissor_select <- rep(0, ncol(data2))
-names(Scissor_select) <- colnames(data2)
+Scissor_select <- rep(0, ncol(data3))
+names(Scissor_select) <- colnames(data3)
 Scissor_select[infos1$Scissor_pos] <- 1
 Scissor_select[infos1$Scissor_neg] <- 2
-data2 <- AddMetaData(data2, metadata = Scissor_select, col.name = "scissor")
+data2 <- AddMetaData(data3, metadata = Scissor_select, col.name = "scissor")
 
 # The umap visualization of myeloid marcrophage subset
 t <- Scissor_select[Scissor_select == 0] %>% length()
@@ -174,7 +191,7 @@ p <- Scissor_select[Scissor_select == 1] %>% length()
 labels_for_p <- c(paste0("Background cells (",t,")"),
                 paste0("Scissor+ cell (",p,")"),
                 paste0("Scissor- cell (",n,")"))
-DimPlot(data2, reduction = 'umap', group.by = 'scissor', 
+DimPlot(data3, reduction = 'umap', group.by = 'scissor', 
         cols = c('grey','indianred1','royalblue'), pt.size = 1.2, order = c(2,1)) +
 	scale_color_manual(values = c('grey','indianred1','royalblue'), 
 	 labels =labels_for_p) + 
