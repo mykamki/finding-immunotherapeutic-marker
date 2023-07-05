@@ -12,7 +12,7 @@ library(DESeq2)
 
 ### 02. Load data
 load(paste0(indir, "infos1.RData"))
-load(paste0(indir, "sc_dataset.RData"))
+load(paste0(indir, "annotated_data1.RData"))
 
 
 
@@ -22,8 +22,13 @@ neg_cell_names <- infos1$Scissor_neg
 
 
 
-### 04. Identify 
- Idents(data1)
+### 04. Identify scissor cells 
+cellnames <- names(Idents(data1))
+cellnames[names(Idents(data1)) %in% neg_cell_names] <- "neg_scissor"
+cellnames[names(Idents(data1)) %in% pos_cell_names ] <- "pos_scissor"
+Idents(data1) <- cellnames
+
+
 
 myident1 <- "neg_scissor"
 others <- c("T_cell", "B_cell", "Myeloid_macrophage", "Fibroblast", "other", "Endothelial_cell")  
