@@ -23,7 +23,7 @@ phenotype$status <- ifelse(phenotype$status == "No", 1, 0)
 phenotype$time <- as.double(phenotype$time)
 
 # check whether bulk_dataset colname matched with phenotype ID
-if (identical(phenotype$ID , colnames(bulk_dataset)))
+if (identical(phenotype$ID , colnames(bulk_dataset))) {
   bulk_dataset <- bulk_dataset[,phenotype$ID]
 }
 rownames(phenotype) <- phenotype$ID
