@@ -1,6 +1,6 @@
 # annotation marker to integrated dataset
 # outdir is "cell_type_ann_result"
-Rscript make_violin_plot_using_cell_markers.R ../Output/INTEGRATION/
+Rscript Modules/make_violin_plot_using_cell_markers.R ../Output/INTEGRATION/
 
 # mannually
 vim ../Output/INTEGRATION/cell_type_ann_result/cluster_ann.R 
