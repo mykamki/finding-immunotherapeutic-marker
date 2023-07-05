@@ -57,16 +57,6 @@ dev.off()
 source("../Output/INTEGRATION/cell_type_ann_result/cluster_ann.R")
 
 ### ...05-1. make df for cluster of scissor cell ###
-make_cluster_n <- function(which_scissor_cell) {
-	df <- as.data.frame(data1$seurat_clusters[names(data1$seurat_clusters) %in% which_scissor_cell])
-	colnames(df) <- "clu"
-	dfs <- df %>% group_by(clu) %>% summarize(n = n()) %>% arrange(-n)
-	dfs$name <- paste0("cluster", dfs$clu)
-	dfs <- dfs[,-1]
-	return(dfs)
-	}
-
-
 ndf <- make_cluster_n(neg_cell_names) # negative cells
 pdf <- make_cluster_n(pos_cell_names) # positive cells
 
@@ -190,15 +180,6 @@ DimPlot(data2, reduction = 'umap', group.by = 'scissor',
 	theme(legend.position = c(0.6, 0.2))
 
 ###...06-4. make df for barplot of cell type ###
-make_celltype_n <- function(which_scissor_cell) {
-	data3 <- subset(data1, subset = CellName %in% which_scissor_cell)
-	df2 <- as.data.frame(table(Idents(data3)))
-	colnames(df2) <- c("CellType","No")
-	df2 <- df2 %>% arrange(-No)
-	df2$name <- gsub("_", " ", df2$CellType, fixed = T)
-	return(df2)
-	}
-
 cellndf <- make_celltype_n(neg_cell_names) # negative cells
 cellpdf <- make_celltype_n(pos_cell_names) # positive cells
 
