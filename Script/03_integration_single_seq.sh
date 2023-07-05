@@ -7,14 +7,14 @@
 
 
 # 01. Integration 
-Rscript integration_single_seq_by_SCT.R ../Output/ ../Output/INTEGRATION/
+Rscript Modules/integration_single_seq_by_SCT.R ../Output/ ../Output/INTEGRATION/
 
 
 # 02. Check optimal resolution for clustering
-Rscript quality_control_single_seq_find_optimal_resolution.R ../Output/INTEGRATION/ 30
+Rscript Modules/quality_control_single_seq_find_optimal_resolution.R ../Output/INTEGRATION/ 30
 
 
 # 03. Do clustering
-Rscript quality_control_single_seq_clustering.R ../Output/INTEGRATION/ 30 1 
+Rscript Modules/quality_control_single_seq_clustering.R ../Output/INTEGRATION/ 30 1 
 
 
