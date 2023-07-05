@@ -88,4 +88,16 @@ my_volcano <- function(de.res) {
   return(p)
 }
 
+my_vlnplot_for_neg_degene <- function(dt, gene) {
+  VlnPlot(dt , features = gene , group.by = "group1",pt.size = 0, y.max = 8) +
+  theme(legend.position = "top") +
+  scale_fill_manual(values = c('grey','royalblue'), 
+    labels = c("Others", "Scissor- cells")) +
+  geom_signif(comparisons = list(c("0","1")),map_signif_level = TRUE, y_position =7.5) +
+  theme(axis.title.x=element_blank()) + 
+  scale_x_discrete(labels = c("",""))
+}
 
+my_umap_for_neg_degene <- function(dt, gene) {
+  FeaturePlot(dt, features = gene)
+}
