@@ -31,7 +31,7 @@ de <- catego_updown(de)
 }
 
 get_top10 <- function(de.res) {
-  top <- 10
+  top <- 20
   top_genes <- bind_rows(
   de.res %>% 
     filter(expression == 'Up-regulated') %>% 
