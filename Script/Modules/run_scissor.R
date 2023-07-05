@@ -4,14 +4,14 @@ library(Scissor)
 library(data.table)
 library(dplyr)
 library(purrr)
-indir_bulk <- args[1]
+indir <- args[1]
 scdata <- args[2]
 outdir <- args[3]
 
 
 ### 01. Load bulk data
-load(file = paste0(indir_bulk, "bulk_dataset.RData"))
-load(file = paste0(indir_bulk, "bulk_clinical.RData"))
+load(file = paste0(indir, "bulk_dataset.RData"))
+load(file = paste0(indir, "bulk_clinical.RData"))
 
 
 
