@@ -83,21 +83,6 @@ data1[["group3"]] <- ifelse(cell_group_df$group1 == 1, 2,
 data_group <- subset(data1, idents = "pos_scissor", invert = TRUE)
 
 ###...07-4. plot of de genes 
-my_vlnplot_for_neg_degene <- function(dt, gene) {
-  VlnPlot(dt , features = gene , group.by = "group1",pt.size = 0, y.max = 8) +
-  theme(legend.position = "top") +
-  scale_fill_manual(values = c('grey','royalblue'), 
-    labels = c("Others", "Scissor- cells")) +
-  geom_signif(comparisons = list(c("0","1")),map_signif_level = TRUE, y_position =7.5) +
-  theme(axis.title.x=element_blank()) + 
-  scale_x_discrete(labels = c("",""))
-}
-
-my_umap_for_neg_degene <- function(dt, gene) {
-  FeaturePlot(dt, features = gene)
-}
-
-
 # "SSR4" "RGS1" "HLA-DRB5" "APOE" "C1QB"  "C1QA"  "APOC1"  "JCHAIN"  "C1QC"  "DERL3"   
 
 p1 <- my_vlnplot_for_neg_degene(data_group, "SSR4")
@@ -121,6 +106,8 @@ extract_legend <- function(my_ggp) {
   return(step3)
 }
 
+
+png("scissor_negative_de_violin_plot.png", width = 700, height = 700)			
 shared_legend <- extract_legend(p1)
 grid.arrange(
 p1 + theme(legend.position='hidden'),
@@ -134,6 +121,7 @@ p8 + theme(legend.position='hidden'),
 p9 + theme(legend.position='hidden'),
 p10 + theme(legend.position='hidden'), 
   top = shared_legend$grobs[[1]])
+dev.off()
 
 
 p1 <- my_umap_for_neg_degene(data1, "SSR4")
@@ -148,6 +136,8 @@ p8 <- my_umap_for_neg_degene(data1, "JCHAIN")
 p9 <- my_umap_for_neg_degene(data1, "C1QC")
 p10 <- my_umap_for_neg_degene(data1, "DERL3")
 
+			
+png("scissor_negative_de_feature_plot.png", width = 700, height = 700)			
 shared_legend <- extract_legend(p4)
 grid.arrange(
 p1 + theme(legend.position='hidden'),
@@ -161,6 +151,6 @@ p8 + theme(legend.position='hidden'),
 p9 + theme(legend.position='hidden'),
 p10 + theme(legend.position='hidden'), 
   right = shared_legend$grobs[[1]])
-
+dev.off()
     
 
