@@ -20,13 +20,26 @@ log_dataset <- v$E
 log_dataset_imvigor210core <- apply(log_dataset, 2, zscore_transform)
 
 
+### 03. Make clinical data
+#sex # Male 1 Female 2
+#ethnicity # white 1 Black or African American 2 Asian 3 Others 4 Unknown 5
+#smk # Current smoker 1 Light smoker 2 Former smoker 3 Never smoker 4
+#ecog # 0 1 2 3 NA
 
-                 
+pData(cds) -> pdata_imvigor210core
+clinical_imvigor210core <- pdata_imvigor210core[,c("Sex", "Race", "Tobacco Use History", "Baseline ECOG Score", "censOS", "os")]
+colnames(b) <- c("sex", "race", "smk", "ecog","status", "time")
+
+
+
+### 03. preprocessing bulk dataset for bladder signature
+### ...03-1. make normalized zscore
+#mygene <- c("SSR4", "CD74", "HLA-DPA1", "JCHAIN", "HLA-DRA", "RGS1")
+mygene <- c("SSR4", "RGS1" ,"HLA-DRB5", "APOE", "C1QB",  "C1QA",  "APOC1",  "JCHAIN",  "C1QC", "DERL3")                 
 ### make gene group
 mygene <- c("SSR4", "CD74", "HLA-DPA1", "JCHAIN", "HLA-DRA", "RGS1", "IGJ")
 #fData(cds)[fData(cds)$Symbol %in% mygene,]$entrez_id
 
-pData(cds) -> clinical_imvigor210core
 
 clinical_imvigor210core$ID <- rownames(clinical_imvigor210core)
 clinical_imvigor210core$time <- clinical_imvigor210core$os * 30.436875
