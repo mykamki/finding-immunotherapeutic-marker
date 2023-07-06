@@ -29,7 +29,7 @@ myprofile <- myfeature[2,1] # "UC_GENOME_RNAseq_zscore"
 
 ###...02-5. Save objects
 uc_genome_object <- list(myprofile, mycaselist)
-
+save(uc_genome_object, file = paste0(outdir, "uc_genome_object.RData"))
 
 
 
