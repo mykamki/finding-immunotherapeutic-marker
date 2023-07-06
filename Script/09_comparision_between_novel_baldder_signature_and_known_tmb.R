@@ -22,7 +22,14 @@ custom_theme <- function() {
 
 my_geneset_survival_plot <- function(dataset, datasettitle) {
 	fit1 <- survfit(Surv(time = time , event = status )~ Novel_Signature , data = dataset)
-	ggsurvplot(fit1, data = dataset, pval = T, risk.table= T,pval.size =6, title= datasettitle, ggtheme=custom_theme())
+	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
+                   title= datasettitle, 
+                   ggtheme=custom_theme(), tables.height = 0.1,
+                   tables.theme = theme_cleantable(), fontsize = 3, 
+                   risk.table.y.text.col = T, # colour risk table text annotations.
+                   risk.table.y.text = F, # show bars instead of names in text annotations
+                   legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
+                )
 }
 
 make_tmb_group_dataset <- function(dataset) {
@@ -34,7 +41,14 @@ make_tmb_group_dataset <- function(dataset) {
 
 my_tmb_survival_plot <- function(dataset, datasettitle) {
 	fit1 <- survfit(Surv(time = time , event = status )~ Known_TMB , data = dataset)
-	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, title= datasettitle, ggtheme=custom_theme())
+	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
+                   title= datasettitle, 
+                   ggtheme=custom_theme(), tables.height = 0.1,
+                   tables.theme = theme_cleantable(), fontsize = 3, 
+                   risk.table.y.text.col = T, # colour risk table text annotations.
+                   risk.table.y.text = F, # show bars instead of names in text annotations
+                   legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
+                )
 }
 
 make_binary_response_dataset <- function(dataset) {
@@ -45,34 +59,70 @@ make_binary_response_dataset <- function(dataset) {
 
 bar_plot_by_gene <- function(dataset) {
 	data <- dataset %>% 
-      filter(!is.na(response.binary)) %>% 
-      group_by(Novel_Signature, response.binary) %>% 
-      summarize(n = n())
-	data$response <- factor(data$response, levels = c("R", "NR"))
-
+                filter(!is.na(response.binary)) %>% 
+                group_by(Novel_Signature, response.binary) %>% 
+                summarize(n = n())
+        data$response.binary <- factor(data$response.binary, levels = c("R", "NR"))
+	
 	ht <- sum(data[data$Novel_Signature == "High",]$n)
-	lt <- sum(data[data$Novel_Signature == "Low",]$n)
-	data$tt <- c(rep(ht, nrow(data[data$Novel_Signature == "High",])), rep(lt,nrow(data[data$Novel_Signature == "Low",])))
-	data <- data %>% mutate(percent = round(n/tt*100,1)) 
+        lt <- sum(data[data$Novel_Signature == "Low",]$n)
+        data$tt <- c(rep(ht, nrow(data[data$Novel_Signature == "High",])), rep(lt,nrow(data[data$Novel_Signature == "Low",])))
+        data <- data %>% mutate(percent = round(n/tt*100,0)) 
 
 	dt <- dcast(data, Novel_Signature ~ response.binary, value.var="n")
-	change_na2zero <- function(x) {ifelse(is.na(x), 0, as.double(x))}
-	apply(dt[,2:5], 2, change_na2zero) %>% fisher.test() -> dtt
+        change_na2zero <- function(x) {ifelse(is.na(x), 0, as.double(x))}
+        apply(dt[,2:3], 2, change_na2zero) %>% fisher.test() -> dtt
 
-	# make plot
-	p <- ggplot(data, aes(fill=response.binary, y=n, x=Novel_Signature)) +
-    geom_bar(position="fill", stat="identity") +
-		scale_x_discrete(labels=c(paste0("High\n(n=", ht,")"), paste0("Low\n(n=", lt,")")))
+        # make plot
+        p <- ggplot(data, aes(fill=response.binary, y=percent, x=Novel_Signature)) +
+                geom_col() + 
+                geom_signif(comparisons = list(c("High", "Low")), 
+                            annotations = paste0("pvalue=", round(dtt$p.value,2)), y_position = 102) +
+                scale_x_discrete(labels=c(paste0("High\n(n=", ht,")"), paste0("Low\n(n=", lt,")"))) +
+                scale_fill_manual(values = c("orange", "royalblue3")) +
+                xlab("") + ylab("") + 
+                theme(panel.background = element_blank(),
+                     axis.ticks = element_blank(),
+                     axis.text.y = element_blank(),
+                     plot.margin = margin(0, 1, 0, 1, "cm")) +
+                geom_text(aes(label=paste0(n," (",percent,"%)")), position = position_stack(vjust = 0.5)) +
+                guides(fill=guide_legend(title="Responder")) + 
+                theme(axis.text.x = element_text(size = 12))
+	
+	return(p)
+}
 
-	p <- p + scale_fill_manual(values = c("orange", "lightskyblue3") +
-	theme_classic() + xlab("") + ylab("Percentage of patients")
-	p <- p + geom_text(aes(label=paste0(n,"(",percent,"%)")), position = position_fill(vjust = 0.5))+
-	guides(fill=guide_legend(title="Responder"))+theme(axis.text.x = element_text(size = 12))
+bar_plot_by_tmb <- function(dataset) {
+	data <- dataset %>% 
+                filter(!is.na(response.binary)) %>% 
+                group_by(Known_TMB, response.binary) %>% 
+                summarize(n = n())
+        data$response.binary <- factor(data$response.binary, levels = c("R", "NR"))
+	
+	ht <- sum(data[data$Known_TMB == "High",]$n)
+        lt <- sum(data[data$Known_TMB == "Low",]$n)
+        data$tt <- c(rep(ht, nrow(data[data$Known_TMB == "High",])), rep(lt,nrow(data[data$Known_TMB == "Low",])))
+        data <- data %>% mutate(percent = round(n/tt*100,0)) 
 
-	p <- p + scale_y_continuous(breaks = c(0, 0.5, 1,1.5))+
-                             geom_signif(annotations = paste0("pvalue=", round(dtt$p.value,2)),
-                                         y_position = 1.03)
-	geom_text(x =1.8, y =1.03, label = paste0("pvalue=", round(dtt$p.value,2)), hjust = 1, size = 4)
+	dt <- dcast(data, Known_TMB ~ response.binary, value.var="n")
+        change_na2zero <- function(x) {ifelse(is.na(x), 0, as.double(x))}
+        apply(dt[,2:3], 2, change_na2zero) %>% fisher.test() -> dtt
+
+        # make plot
+        p <- ggplot(data, aes(fill=response.binary, y=percent, x=Known_TMB)) +
+                geom_col() + 
+                geom_signif(comparisons = list(c("High", "Low")), 
+                            annotations = paste0("pvalue=", round(dtt$p.value,2)), y_position = 102) +
+                scale_x_discrete(labels=c(paste0("High\n(n=", ht,")"), paste0("Low\n(n=", lt,")"))) +
+                scale_fill_manual(values = c("orange", "royalblue3")) +
+                xlab("") + ylab("") + 
+                theme(panel.background = element_blank(),
+                     axis.ticks = element_blank(),
+                     axis.text.y = element_blank(),
+                     plot.margin = margin(0, 1, 0, 1, "cm")) +
+                geom_text(aes(label=paste0(n," (",percent,"%)")), position = position_stack(vjust = 0.5)) +
+                guides(fill=guide_legend(title="Responder")) + 
+                theme(axis.text.x = element_text(size = 12))
 	
 	return(p)
 }
@@ -84,8 +134,6 @@ load(paste0(indir,"clinical_imvigor210core.RData"))
 load(paste0(indir,"clinical_ucgenome.RData"))
 
 
-
-### 03. Survival relevance and ICB response of novel bladder signature in GSE176307
 pA1 <- my_geneset_survival_plot(clinical_gse176307, "GSE176307")
 pA2 <- my_geneset_survival_plot(clinical_imvigor210core, "IMvigor210")
 pA3 <- my_geneset_survival_plot(clinical_ucgenome, "UC-GENOME")
@@ -98,18 +146,48 @@ grid.arrange(pA3$plot + theme(legend.position='hidden'),pA3$table, layout_matrix
 ncol = 3)
 dev.off()
 
+### 03. Survival relevance and ICB response of novel bladder signature in GSE176307
+p1a <- my_geneset_survival_plot(clinical_gse176307, "GSE176307")
+clinical_gse176307 <- make_binary_response_dataset(clinical_gse176307)
+p1b <- bar_plot_by_gene(clinical_gse176307)
 
 
 ### 04. Survival relevance and ICB response of novel bladder signature in IMvigor210
+p2a <- my_geneset_survival_plot(clinical_imvigor210core, "IMvigor210")
+clinical_imvigor210core <- make_binary_response_dataset(clinical_imvigor210core)
+p2b <- bar_plot_by_gene(clinical_imvigor210core)
 
 
 ### 05. Survival relevance and ICB response of novel bladder signature in UC-GENOME
+p3a <- my_geneset_survival_plot(clinical_ucgenome, "UC-GENOME")
+clinical_ucgenome <- make_binary_response_dataset(clinical_ucgenome)
+p3b <- bar_plot_by_gene(clinical_ucgenome)
 
 
 ### 06. Survival relevance and ICB response of known TMB in GSE176307
+q1a <- my_tmb_survival_plot(clinical_gse176307, "GSE176307")
+clinical_gse176307 <- make_tmb_group_dataset(clinical_gse176307)
+q1b <- bar_plot_by_tmb(clinical_gse176307)
 
 
 ### 07. Survival relevance and ICB response of known TMB in IMvigor210
+q2a <- my_tmb_survival_plot(clinical_imvigor210core, "IMvigor210")
+clinical_imvigor210core <- make_tmb_group_dataset(clinical_imvigor210core)
+q2b <- bar_plot_by_tmb(clinical_imvigor210core)
 
 
 ### 08. Survival relevance and ICB response of known TMB in UC-GENOME
+q3a <- my_tmb_survival_plot(clinical_ucgenome, "UC-GENOME")
+clinical_ucgenome <- make_tmb_group_dataset(clinical_ucgenome)
+q3b <- bar_plot_by_tmb(clinical_ucgenome)
+
+
+### 09. 
+grid.arrange(
+grid.arrange(p1a$plot + theme(legend.position='hidden'),p1a$table, layout_matrix = rbind(c(1), c(1), c(2))),
+p1b + theme(legend.position='hidden'),
+grid.arrange(p2a$plot + theme(legend.position='hidden'),p2a$table, layout_matrix = rbind(c(1), c(1), c(2))),
+p2b + theme(legend.position='hidden'),
+grid.arrange(p3a$plot + theme(legend.position='hidden'),p3a$table, layout_matrix = rbind(c(1), c(1), c(2))),
+p3b + theme(legend.position='hidden'),
+ncol = 2)
