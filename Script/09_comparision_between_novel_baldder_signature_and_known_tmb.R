@@ -28,14 +28,15 @@ my_geneset_survival_plot <- function(dataset, datasettitle) {
                    tables.theme = theme_cleantable(), fontsize = 3, 
                    risk.table.y.text.col = T, # colour risk table text annotations.
                    risk.table.y.text = F, # show bars instead of names in text annotations
-                   legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
+                   #legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
                 )
 }
 
 make_tmb_group_dataset <- function(dataset) {
 	dataset <- dataset %>% filter(!is.na(tmb)) 
 	tmb_med <- dataset %>% select(tmb) %>% as.matrix() %>% as.vector() %>% median()
-	dataset <- dataset %>% mutate(Known_TMB = ifelse(tmb >= tmb_med, "High", "Low"))
+	dataset <- dataset %>% mutate(Known_TMB = ifelse(tmb >= tmb_med, "High", 
+							 ifelse(tmb < tmb_med, "Low", NA)))
 	return(dataset)
 }
 
@@ -47,7 +48,7 @@ my_tmb_survival_plot <- function(dataset, datasettitle) {
                    tables.theme = theme_cleantable(), fontsize = 3, 
                    risk.table.y.text.col = T, # colour risk table text annotations.
                    risk.table.y.text = F, # show bars instead of names in text annotations
-                   legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
+                   #legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
                 )
 }
 
@@ -83,7 +84,7 @@ bar_plot_by_gene <- function(dataset) {
                 xlab("") + ylab("") + 
                 theme(panel.background = element_blank(),
                      axis.ticks = element_blank(),
-                     axis.text.y = element_blank(),
+                     axis.text.y = element_blank(),legend.position="top",
                      plot.margin = margin(0, 1, 0, 1, "cm")) +
                 geom_text(aes(label=paste0(n," (",percent,"%)")), position = position_stack(vjust = 0.5)) +
                 guides(fill=guide_legend(title="Responder")) + 
@@ -95,6 +96,7 @@ bar_plot_by_gene <- function(dataset) {
 bar_plot_by_tmb <- function(dataset) {
 	data <- dataset %>% 
                 filter(!is.na(response.binary)) %>% 
+		filter(!is.na(Known_TMB)) %>% 
                 group_by(Known_TMB, response.binary) %>% 
                 summarize(n = n())
         data$response.binary <- factor(data$response.binary, levels = c("R", "NR"))
@@ -118,7 +120,7 @@ bar_plot_by_tmb <- function(dataset) {
                 xlab("") + ylab("") + 
                 theme(panel.background = element_blank(),
                      axis.ticks = element_blank(),
-                     axis.text.y = element_blank(),
+                     axis.text.y = element_blank(), legend.position="top",
                      plot.margin = margin(0, 1, 0, 1, "cm")) +
                 geom_text(aes(label=paste0(n," (",percent,"%)")), position = position_stack(vjust = 0.5)) +
                 guides(fill=guide_legend(title="Responder")) + 
@@ -127,24 +129,18 @@ bar_plot_by_tmb <- function(dataset) {
 	return(p)
 }
 
+extract_legend <- function(my_ggp) {
+  step1 <- ggplot_gtable(ggplot_build(my_ggp))
+  step2 <- which(sapply(step1$grobs, function(x) x$name) == "guide-box")
+  step3 <- step1$grobs[[step2]]
+  return(step3)
+}
 
 ### 02. Load data
 load(paste0(indir,"clinical_gse176307.RData"))
 load(paste0(indir,"clinical_imvigor210core.RData"))
 load(paste0(indir,"clinical_ucgenome.RData"))
 
-
-pA1 <- my_geneset_survival_plot(clinical_gse176307, "GSE176307")
-pA2 <- my_geneset_survival_plot(clinical_imvigor210core, "IMvigor210")
-pA3 <- my_geneset_survival_plot(clinical_ucgenome, "UC-GENOME")
-
-png("surv.png")
-pA <- grid.arrange(
-grid.arrange(pA1$plot + theme(legend.position='hidden'),pA1$table, layout_matrix = rbind(c(1), c(1), c(2))),
-grid.arrange(pA2$plot + theme(legend.position='hidden'),pA2$table, layout_matrix = rbind(c(1), c(1), c(2))),
-grid.arrange(pA3$plot + theme(legend.position='hidden'),pA3$table, layout_matrix = rbind(c(1), c(1), c(2))),
-ncol = 3)
-dev.off()
 
 ### 03. Survival relevance and ICB response of novel bladder signature in GSE176307
 p1a <- my_geneset_survival_plot(clinical_gse176307, "GSE176307")
@@ -165,25 +161,25 @@ p3b <- bar_plot_by_gene(clinical_ucgenome)
 
 
 ### 06. Survival relevance and ICB response of known TMB in GSE176307
-q1a <- my_tmb_survival_plot(clinical_gse176307, "GSE176307")
 clinical_gse176307 <- make_tmb_group_dataset(clinical_gse176307)
+q1a <- my_tmb_survival_plot(clinical_gse176307, "GSE176307")
 q1b <- bar_plot_by_tmb(clinical_gse176307)
 
 
 ### 07. Survival relevance and ICB response of known TMB in IMvigor210
-q2a <- my_tmb_survival_plot(clinical_imvigor210core, "IMvigor210")
 clinical_imvigor210core <- make_tmb_group_dataset(clinical_imvigor210core)
+q2a <- my_tmb_survival_plot(clinical_imvigor210core, "IMvigor210")
 q2b <- bar_plot_by_tmb(clinical_imvigor210core)
 
 
 ### 08. Survival relevance and ICB response of known TMB in UC-GENOME
-q3a <- my_tmb_survival_plot(clinical_ucgenome, "UC-GENOME")
 clinical_ucgenome <- make_tmb_group_dataset(clinical_ucgenome)
+q3a <- my_tmb_survival_plot(clinical_ucgenome, "UC-GENOME")
 q3b <- bar_plot_by_tmb(clinical_ucgenome)
 
 
-### 09. 
-grid.arrange(
+### 09. Plotting
+pA <- grid.arrange(
 grid.arrange(p1a$plot + theme(legend.position='hidden'),p1a$table, layout_matrix = rbind(c(1), c(1), c(2))),
 p1b + theme(legend.position='hidden'),
 grid.arrange(p2a$plot + theme(legend.position='hidden'),p2a$table, layout_matrix = rbind(c(1), c(1), c(2))),
@@ -191,3 +187,21 @@ p2b + theme(legend.position='hidden'),
 grid.arrange(p3a$plot + theme(legend.position='hidden'),p3a$table, layout_matrix = rbind(c(1), c(1), c(2))),
 p3b + theme(legend.position='hidden'),
 ncol = 2)
+
+pB <- grid.arrange(
+grid.arrange(q1a$plot + theme(legend.position='hidden'),q1a$table, layout_matrix = rbind(c(1), c(1), c(2))),
+q1b + theme(legend.position='hidden'),
+grid.arrange(q2a$plot + theme(legend.position='hidden'),q2a$table, layout_matrix = rbind(c(1), c(1), c(2))),
+q2b + theme(legend.position='hidden'),
+grid.arrange(q3a$plot + theme(legend.position='hidden'),q3a$table, layout_matrix = rbind(c(1), c(1), c(2))),
+q3b + theme(legend.position='hidden'),
+ncol = 2)
+
+bar_legend <- extract_legend(q3b)
+sur1_legend <- extract_legend(p1a$plot)
+sur2_legend <- extract_legend(q1a$plot)
+shared_legend <- grid.arrange(sur1_legend, sur2_legend, bar_legend, nrow =1)
+			
+png(paste0(outdir, "test.png"),  width = 800, height = 800)
+grid.arrange(pA,pB, ncol =2, bottom = shared_legend)
+dev.off()
