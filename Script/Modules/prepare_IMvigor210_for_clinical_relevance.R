@@ -4,24 +4,24 @@
 library(IMvigor210CoreBiologies)
 library(limma)
 library(dplyr)
+source("/Script/Functions/func_clinical_relevance.R")
+
 
 
 ### 02. Preprocessing bulk_dataset
-# make functions
+### ... 02-1. change count to tpm
+data(cds) # load data
+imvCounts <- as.data.frame(counts(cds)) %>% as.matrix() # count
+imvTpms <- apply(imvCounts, 2, function(x) tpm(x, fData(cds)$length)) # tpm
 
-# preprocessing rna-seq dataset
-# count
-data(cds)
-imvCounts <- as.data.frame(counts(cds)) %>% as.matrix()
-
-# tpm
-imvTpms <- apply(imvCounts, 2, function(x) tpm(x, fData(cds)$length))
-
-# zscore
+### ... 02-2. change tpm to normalized zscore
 v <- voom(imvTpms)
 log_dataset <- v$E
 log_dataset_imvigor210core <- apply(log_dataset, 2, zscore_transform)
 
+
+
+                 
 ### make gene group
 mygene <- c("SSR4", "CD74", "HLA-DPA1", "JCHAIN", "HLA-DRA", "RGS1", "IGJ")
 #fData(cds)[fData(cds)$Symbol %in% mygene,]$entrez_id
