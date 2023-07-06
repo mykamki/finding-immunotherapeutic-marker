@@ -27,26 +27,33 @@ log_dataset_imvigor210core <- apply(log_dataset, 2, zscore_transform)
 #ecog # 0 1 2 3 NA
 
 pData(cds) -> pdata_imvigor210core
-clinical_imvigor210core <- pdata_imvigor210core[,c("Sex", "Race", "Tobacco Use History", "Baseline ECOG Score", "censOS", "os")]
-colnames(b) <- c("sex", "race", "smk", "ecog","status", "time")
+clinical_imvigor210core <- pdata_imvigor210core[,c("FMOne mutation burden per MB","Best Confirmed Overall Response", 
+                                                   "Sex", "Race", "Tobacco Use History", "Baseline ECOG Score", 
+                                                   "censOS", "os")]
+colnames(clinical_imvigor210core) <- c("tmb", "response", "sex", "ethnicity", "smk", "ecog","status", "time")
+clinical_imvigor210core$ID <- rownames(pdata_imvigor210core)
+clinical_imvigor210core$sex <- ifelse(clinical_imvigor210core$sex == "M", 1, 2)
+clinical_imvigor210core$ethnicity <- ifelse(clinical_imvigor210core$ethnicity == "WHITE", 1, 
+						ifelse(clinical_imvigor210core$ethnicity == "BLACK OR AFRICAN AMERICAN", 2, 
+								ifelse(clinical_imvigor210core$ethnicity == "ASIAN", 3,
+										ifelse(clinical_imvigor210core$ethnicity == "UNKNOWN", 5, 4))))
+clinical_imvigor210core$smk <- ifelse(clinical_imvigor210core$smk == "CURRENT", 1, 
+						ifelse(clinical_imvigor210core$smk == "Light", 2, 
+								ifelse(clinical_imvigor210core$smk == "PREVIOUS", 3,
+										ifelse(clinical_imvigor210core$smk == "NEVER", 4, NA))))
+clinical_imvigor210core$ecog <- ifelse(clinical_imvigor210core$ecog == "0", 0, 
+						ifelse(clinical_imvigor210core$ecog == "1", 1, 
+								ifelse(clinical_imvigor210core$ecog == "2", 2,
+										ifelse(clinical_imvigor210core$ecog == "3", 3, NA))))
+clinical_imvigor210core$time <- clinical_imvigor210core$time *30.436875          
 
 
-
-### 03. preprocessing bulk dataset for bladder signature
-### ...03-1. make normalized zscore
+### 04. preprocessing bulk dataset for bladder signature
+### ...04-1. make normalized zscore
 #mygene <- c("SSR4", "CD74", "HLA-DPA1", "JCHAIN", "HLA-DRA", "RGS1")
 mygene <- c("SSR4", "RGS1" ,"HLA-DRB5", "APOE", "C1QB",  "C1QA",  "APOC1",  "JCHAIN",  "C1QC", "DERL3")                 
-### make gene group
-mygene <- c("SSR4", "CD74", "HLA-DPA1", "JCHAIN", "HLA-DRA", "RGS1", "IGJ")
 #fData(cds)[fData(cds)$Symbol %in% mygene,]$entrez_id
-
-
-clinical_imvigor210core$ID <- rownames(clinical_imvigor210core)
-clinical_imvigor210core$time <- clinical_imvigor210core$os * 30.436875
-clinical_imvigor210core$status <- clinical_imvigor210core$censOS
-clinical_imvigor210core$response <- clinical_imvigor210core$`Best Confirmed Overall Response`
-clinical_imvigor210core$tmb <- clinical_imvigor210core$`FMOne mutation burden per MB`
-
+                 
 res2 <- apply(log_dataset_imvigor210core[rownames(log_dataset_imvigor210core) %in% fData(cds)[fData(cds)$Symbol %in% mygene,]$entrez_id,],2,mean)
 sumgsig <- summary(res2)
 names(res2)[which(res2<=sumgsig[3])] -> low # low ID
