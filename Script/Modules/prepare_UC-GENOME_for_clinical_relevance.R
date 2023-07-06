@@ -2,7 +2,7 @@
 library(cgdsr)
 library(dplyr)
 source("/Script/Functions/func_clinical_relevance.R")
-
+outdir <- args[1]
 
 
 
