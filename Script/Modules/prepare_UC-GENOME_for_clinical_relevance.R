@@ -121,12 +121,14 @@ clinical_ucgenome <- clinical_ucgenome %>% mutate(Novel_Signature = ifelse(ID %i
 clinical_ucgenome$Novel_Signature <- factor(clinical_ucgenome$Novel_Signature)
 
 if (identical(clinical_ucgenome$ID, names(res2))) {
+	clinical_ucgenome$Novel_Signature_score <- res2
+} else {
 	res2 <- res2[clinical_ucgenome$ID]
-	}
-clinical_ucgenome$Novel_Signature_score <- res2
+	clinical_ucgenome$Novel_Signature_score <- res2
+}
+
 
 		 
-
-### 04. Save data
-save(clinical_imvigor210core, file = paste0(outdir, "clinical_imvigor210core.RData"))
-save(log_dataset_imvigor210core, file = paste0(outdir, "log_dataset_imvigor210core.RData"))
+### 05. Save data
+save(clinical_ucgenome, file = paste0(outdir, "clinical_ucgenome.RData"))
+save(log_dataset_ucgenome, file = paste0(outdir, "log_dataset_ucgenome.RData"))
