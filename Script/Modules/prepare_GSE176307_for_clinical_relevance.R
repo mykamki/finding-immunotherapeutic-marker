@@ -63,9 +63,12 @@ clinical_gse176307 <- clinical_gse176307 %>% mutate(Novel_Signature = ifelse(ID 
 clinical_gse176307$Novel_Signature <- factor(clinical_gse176307$Novel_Signature)
 
 if (identical(clinical_gse176307$ID, names(res2))) {
+	clinical_gse176307$Novel_Signature_score <- res2
+} else {
 	res2 <- res2[clinical_gse176307$ID]
-	}
-clinical_gse176307$Novel_Signature_score <- res2
+	clinical_gse176307$Novel_Signature_score <- res2
+}
+
 
 
 ### 04. Save data
