@@ -65,9 +65,11 @@ clinical_imvigor210core <- clinical_imvigor210core %>% mutate(Novel_Signature = 
 clinical_imvigor210core$Novel_Signature <- factor(clinical_imvigor210core$Novel_Signature)
 
 if (identical(clinical_imvigor210core$ID, names(res2))) {
+	clinical_imvigor210core$Novel_Signature_score <- res2
+} else {
 	res2 <- res2[clinical_imvigor210core$ID]
-	}
-clinical_imvigor210core$Novel_Signature_score <- res2
+	clinical_imvigor210core$Novel_Signature_score <- res2
+}
 
 		 
 
