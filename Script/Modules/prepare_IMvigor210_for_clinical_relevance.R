@@ -54,7 +54,13 @@ clinical_imvigor210core$time <- clinical_imvigor210core$time *30.436875
 #mygene <- c("SSR4", "CD74", "HLA-DPA1", "JCHAIN", "HLA-DRA", "RGS1")
 mygene <- c("SSR4", "RGS1" ,"HLA-DRB5", "APOE", "C1QB",  "C1QA",  "APOC1",  "JCHAIN",  "C1QC", "DERL3")                 
 #fData(cds)[fData(cds)$Symbol %in% mygene,]$entrez_id
-                 
+
+### ...04-2. check target patients	 
+pdata_imvigor210core[pdata_imvigor210core$Tissue %in% c("bladder"),] %>% rownames() -> pid
+log_dataset_imvigor210core <- log_dataset_imvigor210core[,pid]	
+clinical_imvigor210core <- clinical_imvigor210core[clinical_imvigor210core$ID %in% pid,]
+
+### ...04-3. calculate novel bladder signature		 
 res2 <- apply(log_dataset_imvigor210core[rownames(log_dataset_imvigor210core) %in% fData(cds)[fData(cds)$Symbol %in% mygene,]$entrez_id,],2,mean)
 sumgsig <- summary(res2)
 names(res2)[which(res2<=sumgsig[3])] -> low # low ID
