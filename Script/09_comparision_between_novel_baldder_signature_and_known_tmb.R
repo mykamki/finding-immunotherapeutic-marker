@@ -1,8 +1,15 @@
 
 ### 01. Setting
+indir <- args[1]
+outdir <- args[2]
+
 
 
 ### 02. Load data
+load(paste0(indir,"clinical_gse176307.RData"))
+load(paste0(indir,"clinical_gse176307.RData"))
+load(paste0(indir,"clinical_gse176307.RData"))
+
 
 
 ### 03. Survival relevance and ICB response of novel bladder signature in GSE176307
