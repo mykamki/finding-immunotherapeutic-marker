@@ -5,7 +5,7 @@ library(IMvigor210CoreBiologies)
 library(limma)
 library(dplyr)
 source("/Script/Functions/func_clinical_relevance.R")
-
+outdir <- args[1]
 
 
 ### 02. Preprocessing bulk_dataset
