@@ -47,6 +47,7 @@ clinical_imvigor210core$ecog <- ifelse(clinical_imvigor210core$ecog == "0", 0,
 										ifelse(clinical_imvigor210core$ecog == "3", 3, NA))))
 clinical_imvigor210core$time <- clinical_imvigor210core$time *30.436875          
 
+		 
 
 ### 04. preprocessing bulk dataset for bladder signature
 ### ...04-1. make normalized zscore
@@ -58,10 +59,20 @@ res2 <- apply(log_dataset_imvigor210core[rownames(log_dataset_imvigor210core) %i
 sumgsig <- summary(res2)
 names(res2)[which(res2<=sumgsig[3])] -> low # low ID
 names(res2)[which(res2>sumgsig[3])] -> high # high ID
-clinical_imvigor210core <- clinical_imvigor210core %>% mutate(Gene_group = ifelse(ID %in% high, "High", "Low"))
-identical(clinical_imvigor210core$ID, names(res2)) # TRUE
-clinical_imvigor210core$genesignature <- res2
 
-### save
-save(clinical_imvigor210core, file = "clinical_imvigor210core.RData")
-save(log_dataset_imvigor210core, file = "log_dataset_imvigor210core.RData")
+### ... 04-2. Divide group 
+clinical_imvigor210core <- clinical_imvigor210core %>% mutate(Novel_Signature = ifelse(ID %in% high, "High", "Low"))
+clinical_imvigor210core$Novel_Signature <- factor(clinical_imvigor210core$Novel_Signature)
+
+if (identical(clinical_imvigor210core$ID, names(res2))) {
+	res2 <- res2[clinical_imvigor210core$ID]
+	}
+clinical_imvigor210core$Novel_Signature_score <- res2
+
+		 
+
+### 04. Save data
+save(clinical_imvigor210core, file = paste0(outdir, "clinical_imvigor210core.RData"))
+save(log_dataset_imvigor210core, file = paste0(outdir, "log_dataset_imvigor210core.RData"))
+
+		 
