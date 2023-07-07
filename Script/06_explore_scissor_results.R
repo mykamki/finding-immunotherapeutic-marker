@@ -180,11 +180,11 @@ VlnPlot(data3, features = c(M1marker, M2marker, momarker) , pt.size = 0, ncol =2
 # cluster 3 : M1
 
 ###...06-3. The umap visualization of myeloid macrophage subset ###
-Scissor_select <- rep(0, ncol(data3))
+Scissor_select <- rep(0, length(Idents(data3)))
 names(Scissor_select) <- colnames(data3)
-Scissor_select[infos1$Scissor_pos] <- 1
-Scissor_select[infos1$Scissor_neg] <- 2
-data2 <- AddMetaData(data3, metadata = Scissor_select, col.name = "scissor")
+Scissor_select[names(Scissor_select) %in% neg_cell_names] <- 1
+Scissor_select[names(Scissor_select) %in% pos_cell_names] <- 2
+data3 <- AddMetaData(data3, metadata = Scissor_select, col.name = "scissor")
 
 # The umap visualization of myeloid marcrophage subset
 t <- Scissor_select[Scissor_select == 0] %>% length()
