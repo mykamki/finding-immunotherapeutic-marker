@@ -16,6 +16,7 @@ my_combination_survival_plot <- function(dataset, datasettitle) {
 	fit1 <- survfit(Surv(time = time , event = status )~ Combination_Signature_TMB , data = dataset)
 	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
                    title= datasettitle, legend = "right",
+		   #palette = c("#00BFC4", "#F8766D"),
                    ggtheme=custom_theme(), tables.height = 0.1,
                    tables.theme = theme_cleantable(), fontsize = 3, 
                    risk.table.y.text.col = T, # colour risk table text annotations.
@@ -25,7 +26,7 @@ my_combination_survival_plot <- function(dataset, datasettitle) {
 }
 
 my_extreme_combination_survival_plot <- function(dataset, datasettitle) {
-	dataset <- dataset %>% filter(Combination_Signature_TMB %in% c("HH", "LL"))
+	dataset <- dataset %>% filter(Combination_Signature_TMB %in% c("HL", "LL"))
 	fit1 <- survfit(Surv(time = time , event = status )~ Combination_Signature_TMB , data = dataset)
 	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
                    title= datasettitle, legend = "right",
@@ -51,6 +52,7 @@ make_combination_group_dataset <- function(dataset) {
 			TRUE ~ NA_character_
 			)
 		)
+	#dataset$Combination_Signature_TMB <- factor(dataset$Combination_Signature_TMB, levels = c("Both High", "Any Low"))
 	return(dataset)
 }
 
@@ -68,8 +70,8 @@ bar_plot_by_combination <- function(dataset) {
 	ll <- sum(data[data$Combination_Signature_TMB == "LL",]$n)
 
 	data$tt <- c(rep(hh,nrow(data[data$Combination_Signature_TMB == "HH",])), 
-		     rep(hl,nrow(data[data$Combination_Signature_TMB == "HL",])),
-	  	     rep(lh,nrow(data[data$Combination_Signature_TMB == "LH",])),
+		     rep(hl,nrow(data[data$Combination_Signature_TMB == "HL",])), 
+		     rep(lh,nrow(data[data$Combination_Signature_TMB == "LH",])), 
 		     rep(ll,nrow(data[data$Combination_Signature_TMB == "LL",])))
 	data <- data %>% mutate(percent = round(n/tt*100,1)) 
 
@@ -82,9 +84,9 @@ bar_plot_by_combination <- function(dataset) {
                 geom_col() + 
                 geom_signif(comparisons = list(c("HH", "LL")), 
                             annotations = paste0("pvalue=", round(dtt$p.value,2)), y_position = 102) +
-                scale_x_discrete(labels=c(paste0("HH\n(n=", hh,")"), 
-					  paste0("HL\n(n=", hl,")"),
-					  paste0("LH\n(n=", lh,")"),
+                scale_x_discrete(labels=c(paste0("HH\n(n=", hh,")"),
+					  paste0("HL\n(n=", hl,")"), 
+					  paste0("LH\n(n=", lh,")"), 
 					  paste0("LL\n(n=", ll,")"))) +
                 scale_fill_manual(values = c("orange", "royalblue3")) +
                 xlab("") + ylab("") + 
@@ -138,6 +140,24 @@ bar_plot_by_extreme_combination <- function(dataset) {
 	return(p)
 }
 
+make_combination_group_dataset <- function(dataset) {
+        dataset <- dataset %>% filter(!is.na(tmb)) 
+        tmb_med <- dataset %>% select(tmb) %>% as.matrix() %>% as.vector() %>% median()
+        dataset <- dataset %>% mutate(Known_TMB = ifelse(tmb >= tmb_med, "High", 
+                                                         ifelse(tmb < tmb_med, "Low", NA)))
+        dataset <- dataset %>% mutate(
+                Combination_Signature_TMB = case_when(
+                        Novel_Signature == "High" & Known_TMB == "High" ~ "HH",
+                        Novel_Signature == "High" & Known_TMB == "Low" ~ "HL",
+                        Novel_Signature == "Low" & Known_TMB == "High" ~ "LH",
+                        Novel_Signature == "Low" & Known_TMB == "Low" ~ "LL",
+                        TRUE ~ NA_character_
+                        )
+                )
+        #dataset$Combination_Signature_TMB <- factor(dataset$Combination_Signature_TMB, levels = c("Both High", "Any Low"))
+        return(dataset)
+}
+
 ### 02. Load data
 load(paste0(indir,"clinical_gse176307.RData"))
 load(paste0(indir,"clinical_imvigor210core.RData"))
@@ -177,33 +197,98 @@ ncol = 2)
 
 bar_legend <- extract_legend(p1b)
 sur1_legend <- extract_legend(p1a$plot)
-shared_legend <- grid.arrange(sur1_legend, bar_legend, nrow =2)
+shared_legend <- grid.arrange(sur1_legend, bar_legend, nrow =1)
 			
-png(paste0(outdir, "test.png"),  width = 550, height = 800)
-grid.arrange(pA)
-dev.off()
-
-
-q1a <- my_extreme_combination_survival_plot(clinical_gse176307, "GSE176307")
-q1b <- bar_plot_by_extreme_combination(clinical_gse176307)
-q2a <- my_extreme_combination_survival_plot(clinical_imvigor210core, "IMvigor210")
-q2b <- bar_plot_by_extreme_combination(clinical_imvigor210core)
-q3a <- my_extreme_combination_survival_plot(clinical_ucgenome, "UC-GENOME")
-q3b <- bar_plot_by_extreme_combination(clinical_ucgenome)
-
-pB <- grid.arrange(
-grid.arrange(q1a$plot + theme(legend.position='hidden'),q1a$table, layout_matrix = rbind(c(1), c(1), c(2))),
-q1b + theme(legend.position='hidden'),
-grid.arrange(q2a$plot + theme(legend.position='hidden'),q2a$table, layout_matrix = rbind(c(1), c(1), c(2))),
-q2b + theme(legend.position='hidden'),
-grid.arrange(q3a$plot + theme(legend.position='hidden'),q3a$table, layout_matrix = rbind(c(1), c(1), c(2))),
-q3b + theme(legend.position='hidden'),
-ncol = 2)
-
-png(paste0(outdir, "test.png"),  width = 450, height = 700)
-grid.arrange(pB)
+png(paste0(outdir, "fig3.png"),  width = 500, height = 800)
+grid.arrange(pA, shared_legend, heights = c(8, 1))
 dev.off()
 
 
 
 
+my_HH_survival_plot <- function(dataset, datasettitle) {
+	dataset <- dataset %>% filter(Combination_Signature_TMB %in% c("HH", "LL"))
+	fit1 <- survfit(Surv(time = time , event = status )~ Combination_Signature_TMB , data = dataset)
+	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
+                   title= datasettitle, legend = "right",
+		   palette = c("#F8766D", "#C77CFF"),
+                   ggtheme=custom_theme(), tables.height = 0.1,
+                   tables.theme = theme_cleantable(), fontsize = 3, 
+                   risk.table.y.text.col = T, # colour risk table text annotations.
+                   risk.table.y.text = F, # show bars instead of names in text annotations
+                   #legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
+                )
+}
+
+my_LH_survival_plot <- function(dataset, datasettitle) {
+	dataset <- dataset %>% filter(Combination_Signature_TMB %in% c("LH", "LL"))
+	fit1 <- survfit(Surv(time = time , event = status )~ Combination_Signature_TMB , data = dataset)
+	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
+                   title= datasettitle, legend = "right",
+		   palette = c("#00BFC4", "#C77CFF"),
+                   ggtheme=custom_theme(), tables.height = 0.1,
+                   tables.theme = theme_cleantable(), fontsize = 3, 
+                   risk.table.y.text.col = T, # colour risk table text annotations.
+                   risk.table.y.text = F, # show bars instead of names in text annotations
+                   #legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
+                )
+}
+
+my_HL_survival_plot <- function(dataset, datasettitle) {
+	dataset <- dataset %>% filter(Combination_Signature_TMB %in% c("HL", "LL"))
+	fit1 <- survfit(Surv(time = time , event = status )~ Combination_Signature_TMB , data = dataset)
+	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
+                   title= datasettitle, legend = "right",
+		   palette = c("#7CAE00", "#C77CFF"),
+                   ggtheme=custom_theme(), tables.height = 0.1,
+                   tables.theme = theme_cleantable(), fontsize = 3, 
+                   risk.table.y.text.col = T, # colour risk table text annotations.
+                   risk.table.y.text = F, # show bars instead of names in text annotations
+                   #legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
+                )
+}
+
+qa1 <- my_HH_survival_plot(clinical_gse176307, "")
+qa2 <- my_LH_survival_plot(clinical_gse176307, "")
+qa3 <- my_HL_survival_plot(clinical_gse176307, "")
+
+qb1 <- my_HH_survival_plot(clinical_imvigor210core, "")
+qb2 <- my_LH_survival_plot(clinical_imvigor210core, "")
+qb3 <- my_HL_survival_plot(clinical_imvigor210core, "")
+
+qc1 <- my_HH_survival_plot(clinical_ucgenome, "")
+qc2 <- my_LH_survival_plot(clinical_ucgenome, "")
+qc3 <- my_HL_survival_plot(clinical_ucgenome, "")
+
+
+qa <- grid.arrange(
+grid.arrange(qa1$plot + theme(legend.position='hidden'),qa1$table, layout_matrix = rbind(c(1), c(1), c(2))),
+grid.arrange(qa2$plot + theme(legend.position='hidden'),qa2$table, layout_matrix = rbind(c(1), c(1), c(2))),
+grid.arrange(qa3$plot + theme(legend.position='hidden'),qa3$table, layout_matrix = rbind(c(1), c(1), c(2))),
+nrow = 1)
+
+qb <- grid.arrange(
+grid.arrange(qb1$plot + theme(legend.position='hidden'),qb1$table, layout_matrix = rbind(c(1), c(1), c(2))),
+grid.arrange(qb2$plot + theme(legend.position='hidden'),qb2$table, layout_matrix = rbind(c(1), c(1), c(2))),
+grid.arrange(qb3$plot + theme(legend.position='hidden'),qb3$table, layout_matrix = rbind(c(1), c(1), c(2))),
+nrow = 1)
+
+qc <- grid.arrange(
+grid.arrange(qc1$plot + theme(legend.position='hidden'),qc1$table, layout_matrix = rbind(c(1), c(1), c(2))),
+grid.arrange(qc2$plot + theme(legend.position='hidden'),qc2$table, layout_matrix = rbind(c(1), c(1), c(2))),
+grid.arrange(qc3$plot + theme(legend.position='hidden'),qc3$table, layout_matrix = rbind(c(1), c(1), c(2))),
+nrow = 1)
+
+sur1_legend <- extract_legend(qa1$plot)
+sur2_legend <- extract_legend(qa2$plot)
+sur3_legend <- extract_legend(qa3$plot)
+
+shared_legend <- grid.arrange(sur1_legend, sur2_legend, sur3_legend, nrow =1)
+
+
+p <- grid.arrange(qa, qb, qc, shared_legend, heights = c(2,2,2,0.5))
+
+png(paste0(outdir, "supfig6.png"),  width = 600, height = 750)
+as_ggplot(p) +  draw_plot_label(label = c("a", "b", "c"), size = 15,
+                  x = c(0, 0, 0), y = c(1, 0.7, 0.4))   # transform to a ggplot
+dev.off()
