@@ -1,0 +1,28 @@
+# Step 1: Prepare your data
+data <- data.frame(sex = c("Male", "Female", "Male", "Female"),
+                   race = c("White", "Black", "White", "Asian"),
+                   smoking = c("Yes", "No", "No", "Yes"),
+                   eco = c("Low", "High", "Low", "Medium"),
+                   study = c("Study A", "Study B", "Study C", "Study A"))
+
+# Step 2: One-hot encode categorical variables
+encoded_data <- model.matrix(~.-1, data = data)
+
+# Step 3: Perform PCA
+pca_result <- prcomp(encoded_data)
+
+# Step 4: Select principal components
+num_components <- 2  # Selecting 2 components for this example
+selected_components <- pca_result$rotation[, 1:num_components]
+
+# Step 5: Project the data onto the selected components
+projected_data <- encoded_data %*% selected_components
+
+# Step 6: Visualize the data and compare across studies
+plot(projected_data[, 1], projected_data[, 2],
+     xlab = "Principal Component 1", ylab = "Principal Component 2",
+     main = "PCA Visualization")
+
+# Step 7: Compare PCA results across studies
+study <- data$study
+text(projected_data[, 1], projected_data[, 2], labels = study, pos = 3)
