@@ -70,7 +70,7 @@ make_combination_group_dataset <- function(dataset) {
 			TRUE ~ NA_character_
 			)
 		)
-	#dataset$Combination_Signature_TMB <- factor(dataset$Combination_Signature_TMB, levels = c("Both High", "Any Low"))
+	dataset$Combination_Signature_TMB <- factor(dataset$Combination_Signature_TMB, levels = c("HH", "Any"))
 	return(dataset)
 }
 
@@ -233,6 +233,10 @@ grid.arrange(p1a$plot + theme(legend.position='hidden'),p1a$table, layout_matrix
 grid.arrange(p2a$plot + theme(legend.position='hidden'),p2a$table, layout_matrix = rbind(c(1), c(1), c(2))),
 grid.arrange(p3a$plot + theme(legend.position='hidden'),p3a$table, layout_matrix = rbind(c(1), c(1), c(2))),
 ncol = 1)
+
+png("test.png", width = 250, height = 800)
+grid.arrange(p, sur1_legend, heights = c(8, 1))
+dev.off()
 
 ### 06. Plotting
 pA <- grid.arrange(
