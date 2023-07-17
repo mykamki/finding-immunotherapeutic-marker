@@ -56,6 +56,41 @@ make_combination_group_dataset <- function(dataset) {
 	return(dataset)
 }
 
+make_combination_group_dataset <- function(dataset) {
+	dataset <- dataset %>% filter(!is.na(tmb)) 
+	tmb_med <- dataset %>% select(tmb) %>% as.matrix() %>% as.vector() %>% median()
+	dataset <- dataset %>% mutate(Known_TMB = ifelse(tmb >= tmb_med, "High", 
+							 ifelse(tmb < tmb_med, "Low", NA)))
+	dataset <- dataset %>% mutate(
+		Combination_Signature_TMB = case_when(
+			Novel_Signature == "High" & Known_TMB == "High" ~ "HH",
+			Novel_Signature == "High" & Known_TMB == "Low" ~ "Any",
+			Novel_Signature == "Low" & Known_TMB == "High" ~ "Any",
+			Novel_Signature == "Low" & Known_TMB == "Low" ~ "Any",
+			TRUE ~ NA_character_
+			)
+		)
+	#dataset$Combination_Signature_TMB <- factor(dataset$Combination_Signature_TMB, levels = c("Both High", "Any Low"))
+	return(dataset)
+}
+
+make_combination_group_dataset <- function(dataset) {
+	dataset <- dataset %>% filter(!is.na(tmb)) 
+	tmb_med <- dataset %>% select(tmb) %>% as.matrix() %>% as.vector() %>% median()
+	dataset <- dataset %>% mutate(Known_TMB = ifelse(tmb >= tmb_med, "High", 
+							 ifelse(tmb < tmb_med, "Low", NA)))
+	dataset <- dataset %>% mutate(
+		Combination_Signature_TMB = case_when(
+			Novel_Signature == "High" & Known_TMB == "High" ~ "Any",
+			Novel_Signature == "High" & Known_TMB == "Low" ~ "Any",
+			Novel_Signature == "Low" & Known_TMB == "High" ~ "Any",
+			Novel_Signature == "Low" & Known_TMB == "Low" ~ "LL",
+			TRUE ~ NA_character_
+			)
+		)
+	#dataset$Combination_Signature_TMB <- factor(dataset$Combination_Signature_TMB, levels = c("Both High", "Any Low"))
+	return(dataset)
+}
 
 bar_plot_by_combination <- function(dataset) {
 	data <- dataset %>% 
@@ -184,6 +219,20 @@ clinical_ucgenome <- make_binary_response_dataset(clinical_ucgenome)
 p3a <- my_combination_survival_plot(clinical_ucgenome, "UC-GENOME")
 p3b <- bar_plot_by_combination(clinical_ucgenome)
 
+
+
+clinical_gse176307 <- make_combination_group_dataset(clinical_gse176307)
+clinical_imvigor210core <- make_combination_group_dataset(clinical_imvigor210core)
+clinical_ucgenome <- make_combination_group_dataset(clinical_ucgenome)
+p1a <- my_combination_survival_plot(clinical_gse176307, "GSE176307")
+p2a <- my_combination_survival_plot(clinical_imvigor210core, "IMvigor210")
+p3a <- my_combination_survival_plot(clinical_ucgenome, "UC-GENOME")
+
+p <- grid.arrange(
+grid.arrange(p1a$plot + theme(legend.position='hidden'),p1a$table, layout_matrix = rbind(c(1), c(1), c(2))),
+grid.arrange(p2a$plot + theme(legend.position='hidden'),p2a$table, layout_matrix = rbind(c(1), c(1), c(2))),
+grid.arrange(p3a$plot + theme(legend.position='hidden'),p3a$table, layout_matrix = rbind(c(1), c(1), c(2))),
+ncol = 1)
 
 ### 06. Plotting
 pA <- grid.arrange(
