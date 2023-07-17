@@ -19,13 +19,28 @@ data <- data.frame(sex = c("Male", "Female", "Male", "Female"),
                    eco = c("Low", "High", "Low", "Medium"),
                    study = c("Study A", "Study B", "Study C", "Study A"))
 
+
+autoplot(pca_res)
 # Step 2: One-hot encode categorical variables
-encoded_data <- model.matrix(~.-1, data = data)
+encoded_data <- model.matrix(~.-1, data = data[,-1])
+encoded_data <- dcast(data = melt(data, id.vars = "ID"), ID ~ sex + ethnicity + smk + ecog, length)
+dummy <- dummyVars(" ~ .", data=data)
+encoded_data <- data.frame(predict(dummy, newdata = data[,-1]))
+
+#define one-hot encoding function
+dummy <- dummyVars(" ~ .", data=data[,-1])
+
+#perform one-hot encoding on data frame
+final_df <- data.frame(predict(dummy, newdata=df))
+
+#view final data frame
+final_df
 
 # Step 3: Perform PCA
 pca_result <- prcomp(encoded_data)
 
 # Step 4: Select principal components
+pca_result$rotation <- -1*pca_result$rotation
 num_components <- 2  # Selecting 2 components for this example
 selected_components <- pca_result$rotation[, 1:num_components]
 
