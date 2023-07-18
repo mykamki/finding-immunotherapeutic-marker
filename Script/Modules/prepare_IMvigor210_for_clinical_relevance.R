@@ -64,8 +64,8 @@ log_dataset_imvigor210core <- t(log_dataset_imvigor210core)
 ### ...04-3. calculate novel bladder signature		 
 res2 <- apply(log_dataset_imvigor210core,2,mean)
 sumgsig <- summary(res2)
-names(res2)[which(res2<=sumgsig[3])] -> low # low ID
-names(res2)[which(res2>sumgsig[3])] -> high # high ID
+names(res2)[which(res2<sumgsig[3])] -> low # low ID
+names(res2)[which(res2>=sumgsig[3])] -> high # high ID
 
 ### ... 04-2. Divide group 
 clinical_imvigor210core <- clinical_imvigor210core %>% mutate(Novel_Signature = ifelse(ID %in% high, "High", "Low"))
