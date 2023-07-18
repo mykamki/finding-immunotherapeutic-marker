@@ -37,6 +37,15 @@ clinical_gse176307$ecog <- ifelse(clinical_gse176307$ecog == "0", 0,
 #smk # Current smoker 1 Light smoker 2 Former smoker 3 Never smoker 4
 #ecog # 0 1 2 3 NA
 
+log_dataset_imvigor210core <- log_dataset[rownames(log_dataset) %in% fData(cds)[fData(cds)$Symbol %in% mygene,]$entrez_id,pid]
+log_dataset_imvigor210core <- apply(log_dataset_imvigor210core, 1, zscore_transform)
+log_dataset_imvigor210core <- t(log_dataset_imvigor210core)		 
+		 
+### ...04-3. calculate novel bladder signature		 
+res2 <- apply(log_dataset_imvigor210core,2,mean)
+sumgsig <- summary(res2)
+names(res2)[which(res2<=sumgsig[3])] -> low # low ID
+names(res2)[which(res2>sumgsig[3])] -> high # high ID
 
 
 ### 03. preprocessing bulk dataset for bladder signature
