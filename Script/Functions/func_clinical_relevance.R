@@ -19,7 +19,7 @@ custom_theme <- function() {
 my_geneset_survival_plot <- function(dataset, datasettitle) {
 	fit1 <- survfit(Surv(time = time , event = status )~ Novel_Signature , data = dataset)
 	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
-                   title= datasettitle, 
+                   title= datasettitle, legend = "right",
                    ggtheme=custom_theme(), tables.height = 0.1,
                    tables.theme = theme_cleantable(), fontsize = 3, 
                    risk.table.y.text.col = T, # colour risk table text annotations.
