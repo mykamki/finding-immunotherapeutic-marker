@@ -55,8 +55,8 @@ log_dataset_gse176307 <- t(log_dataset_gse176307)
 rownames(log_dataset_gse176307) %in% mygene %>% sum() # check gene names
 res2 <- apply(log_dataset_gse176307,2,mean)
 sumgsig <- summary(res2)
-names(res2)[which(res2<=sumgsig[3])] -> low # low ID
-names(res2)[which(res2>sumgsig[3])] -> high # high ID
+names(res2)[which(res2<sumgsig[3])] -> low # low ID
+names(res2)[which(res2>=sumgsig[3])] -> high # high ID
 
 clinical_gse176307 <- clinical_gse176307 %>% mutate(Novel_Signature = ifelse(ID %in% high, "High", "Low"))
 clinical_gse176307$Novel_Signature <- factor(clinical_gse176307$Novel_Signature)
