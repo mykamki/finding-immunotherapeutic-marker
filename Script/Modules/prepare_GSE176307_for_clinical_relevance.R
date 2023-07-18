@@ -37,16 +37,6 @@ clinical_gse176307$ecog <- ifelse(clinical_gse176307$ecog == "0", 0,
 #smk # Current smoker 1 Light smoker 2 Former smoker 3 Never smoker 4
 #ecog # 0 1 2 3 NA
 
-log_dataset_imvigor210core <- log_dataset[rownames(log_dataset) %in% fData(cds)[fData(cds)$Symbol %in% mygene,]$entrez_id,pid]
-log_dataset_imvigor210core <- apply(log_dataset_imvigor210core, 1, zscore_transform)
-log_dataset_imvigor210core <- t(log_dataset_imvigor210core)		 
-		 
-### ...04-3. calculate novel bladder signature		 
-res2 <- apply(log_dataset_imvigor210core,2,mean)
-sumgsig <- summary(res2)
-names(res2)[which(res2<=sumgsig[3])] -> low # low ID
-names(res2)[which(res2>sumgsig[3])] -> high # high ID
-
 
 ### 03. preprocessing bulk dataset for bladder signature
 ### ...03-1. make normalized zscore
@@ -57,13 +47,13 @@ zscore_transform <- function(x) {
 }
 v <- voom(bulk_dataset)
 log_dataset <- v$E
-log_dataset2 <- apply(log_dataset, 2, zscore_transform)
-
+mygene <- ifelse(mygene %in% "JCHAIN", "IGJ", mygene)
+log_dataset_gse176307 <- apply(log_dataset[rownames(log_dataset) %in% mygene ,], 1, zscore_transform)
+log_dataset_gse176307 <- t(log_dataset_gse176307)
 
 ### ...03-2. divide group by bladder signature
-mygene <- ifelse(mygene %in% "JCHAIN", "IGJ", mygene)
-rownames(log_dataset2) %in% mygene %>% sum() # check gene names
-res2 <- apply(log_dataset2[rownames(log_dataset2) %in% mygene ,],2,mean)
+rownames(log_dataset_gse176307) %in% mygene %>% sum() # check gene names
+res2 <- apply(log_dataset_gse176307,2,mean)
 sumgsig <- summary(res2)
 names(res2)[which(res2<=sumgsig[3])] -> low # low ID
 names(res2)[which(res2>sumgsig[3])] -> high # high ID
@@ -81,7 +71,6 @@ if (identical(clinical_gse176307$ID, names(res2))) {
 
 
 ### 04. Save data
-log_dataset_gse176307 <- log_dataset2
 save(clinical_gse176307, file = paste0(outdir, "clinical_gse176307.RData"))
 save(log_dataset_gse176307, file = paste0(outdir, "log_dataset_gse176307.RData"))
 
