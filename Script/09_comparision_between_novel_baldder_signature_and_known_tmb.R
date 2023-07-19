@@ -80,6 +80,17 @@ sur1_legend <- extract_legend(p1a$plot)
 sur2_legend <- extract_legend(q1a$plot)
 shared_legend <- grid.arrange(sur1_legend, sur2_legend, bar_legend, nrow =1)
 			
-png(paste0(outdir, "test.png"),  width = 800, height = 800)
-grid.arrange(pA,pB, ncol =2, bottom = shared_legend)
+png(paste0(outdir, "Novel_signature_and_tmb.png"),  width = 800, height = 800)
+grid.arrange(ggarrange(anno1, anno2, nrow =1), ggarrange(pA,pB),shared_legend, heights = c(0.5,8,0.5))
 dev.off()
+
+
+
+
+
+
+
+anno1 <- my_anno_plot("Novel Gene Signature")
+anno2 <- my_anno_plot("Known TMB")
+
+
