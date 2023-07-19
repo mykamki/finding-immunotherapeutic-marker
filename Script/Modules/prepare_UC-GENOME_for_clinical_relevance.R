@@ -117,9 +117,12 @@ if (rownames(log_dataset_ucgenome) %in% mygene %>% sum() == 10) {
 	clinical_ucgenome <- make_genesignature(clinical_ucgenome, log_dataset_ucgenome)
 }
 
-log_dataset_ucgenome
 
-
+log_dataset_ucgenome2 <- apply(log_dataset_ucgenome, 1, zscore_transform)
+log_dataset_ucgenome2 <- t(log_dataset_ucgenome2)
+if (rownames(log_dataset_ucgenome2) %in% mygene %>% sum() == 10) {
+	clinical_ucgenome2 <- make_genesignature(clinical_ucgenome, log_dataset_ucgenome2)
+}
 
 		 
 ### 05. Save data
