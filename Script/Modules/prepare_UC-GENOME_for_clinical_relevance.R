@@ -112,23 +112,13 @@ if (identical(clinical_ucgenome$ID, colnames(log_dataset_ucgenome))) {
   }
 mygene <- gsub("-",".", mygene, fixed = T)
 
-
-
-res2 <- apply(log_dataset_ucgenome[rownames(log_dataset_ucgenome) %in% mygene,] , 2, mean)
-sumgsig <- summary(res2)
-names(res2)[which(res2<sumgsig[3])] -> low # low ID
-names(res2)[which(res2>=sumgsig[3])] -> high # high ID
-
-### ... 04-4. Divide group 
-clinical_ucgenome <- clinical_ucgenome %>% mutate(Novel_Signature = ifelse(ID %in% high, "High", "Low"))
-clinical_ucgenome$Novel_Signature <- factor(clinical_ucgenome$Novel_Signature)
-
-if (identical(clinical_ucgenome$ID, names(res2))) {
-	clinical_ucgenome$Novel_Signature_score <- res2
-} else {
-	res2 <- res2[clinical_ucgenome$ID]
-	clinical_ucgenome$Novel_Signature_score <- res2
+###... 04-4. Divide patients
+if (rownames(log_dataset_ucgenome) %in% mygene %>% sum() == 10) {
+	clinical_ucgenome <- make_genesignature(clinical_ucgenome, log_dataset_ucgenome)
 }
+
+log_dataset_ucgenome
+
 
 
 		 
