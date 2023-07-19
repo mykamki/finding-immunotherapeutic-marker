@@ -42,30 +42,16 @@ clinical_gse176307$ecog <- ifelse(clinical_gse176307$ecog == "0", 0,
 ### ...03-1. make normalized zscore
 #mygene <- c("SSR4", "CD74", "HLA-DPA1", "JCHAIN", "HLA-DRA", "RGS1")
 mygene <- c("SSR4", "RGS1" ,"HLA-DRB5", "APOE", "C1QB",  "C1QA",  "APOC1",  "JCHAIN",  "C1QC", "DERL3")
-zscore_transform <- function(x) {
-  (x-mean(x))/sd(x)
-}
 v <- voom(bulk_dataset)
 log_dataset <- v$E
 mygene <- ifelse(mygene %in% "JCHAIN", "IGJ", mygene)
 log_dataset_gse176307 <- apply(log_dataset[rownames(log_dataset) %in% mygene ,], 1, zscore_transform)
 log_dataset_gse176307 <- t(log_dataset_gse176307)
 
+
 ### ...03-2. divide group by bladder signature
-rownames(log_dataset_gse176307) %in% mygene %>% sum() # check gene names
-res2 <- apply(log_dataset_gse176307,2,mean)
-sumgsig <- summary(res2)
-names(res2)[which(res2<sumgsig[3])] -> low # low ID
-names(res2)[which(res2>=sumgsig[3])] -> high # high ID
-
-clinical_gse176307 <- clinical_gse176307 %>% mutate(Novel_Signature = ifelse(ID %in% high, "High", "Low"))
-clinical_gse176307$Novel_Signature <- factor(clinical_gse176307$Novel_Signature)
-
-if (identical(clinical_gse176307$ID, names(res2))) {
-	clinical_gse176307$Novel_Signature_score <- res2
-} else {
-	res2 <- res2[clinical_gse176307$ID]
-	clinical_gse176307$Novel_Signature_score <- res2
+if (rownames(log_dataset_gse176307) %in% mygene %>% sum() == 10) {
+	clinical_gse176307 <- make_genesignature(clinical_gse176307, log_dataset_gse176307)
 }
 
 
