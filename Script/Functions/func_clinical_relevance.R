@@ -214,8 +214,8 @@ my_combination_survival_plot <- function(dataset, datasettitle) {
 
 
 make_combination_group_dataset <- function(dataset) {
-	dataset <- dataset %>% filter(!is.na(tmb)) 
-	tmb_med <- dataset %>% select(tmb) %>% as.matrix() %>% as.vector() %>% median()
+	#dataset <- dataset %>% filter(!is.na(tmb)) 
+	tmb_med <- dataset %>% select(tmb) %>% as.matrix() %>% as.vector() %>% median(na.rm = T)
 	dataset <- dataset %>% mutate(Known_TMB = ifelse(tmb >= tmb_med, "High", 
 							 ifelse(tmb < tmb_med, "Low", NA)))
 	dataset <- dataset %>% mutate(
