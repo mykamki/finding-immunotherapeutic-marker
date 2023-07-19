@@ -58,19 +58,26 @@ hh_vs_other <- function(clinical_gse176307, clinical_imvigor210core, clinical_uc
 	}
 
 	
-  ### Survival relevance and ICB response of combination between novel bladder signature and known TMB in GSE176307
-  p1a <- my_combination_survival_plot(clinical_gse176307, "GSE176307")
-  p1b <- bar_plot_by_combination(clinical_gse176307)
+### Survival relevance and ICB response of combination between novel bladder signature and known TMB in GSE176307
+clinical_gse176307_2 <- make_combination_group_dataset(clinical_gse176307)
+clinical_gse176307_2 <- make_binary_response_dataset(clinical_gse176307_2)
+p1a <- my_combination_survival_plot(clinical_gse176307_2, "GSE176307")
+p1b <- bar_plot_by_combination(clinical_gse176307_2)
 
 
-  ### Survival relevance and ICB response of ncombination between novel bladder signature and known TMB in IMvigor210
-  p2a <- my_combination_survival_plot(clinical_imvigor210core, "IMvigor210")
-  p2b <- bar_plot_by_combination(clinical_imvigor210core)
+### Survival relevance and ICB response of ncombination between novel bladder signature and known TMB in IMvigor210
+clinical_imvigor210core_2 <- make_combination_group_dataset(clinical_imvigor210core)
+clinical_imvigor210core_2 <- make_binary_response_dataset(clinical_imvigor210core_2)
+p2a <- my_combination_survival_plot(clinical_imvigor210core_2, "IMvigor210")
+p2b <- bar_plot_by_combination(clinical_imvigor210core_2)
 
 
-  ### Survival relevance and ICB response of combination between novel bladder signature and known TMB in UC-GENOME
-  p3a <- my_combination_survival_plot(clinical_ucgenome, "UC-GENOME")
-  p3b <- bar_plot_by_combination(clinical_ucgenome)
+### Survival relevance and ICB response of combination between novel bladder signature and known TMB in UC-GENOME
+clinical_ucgenome_2 <- make_combination_group_dataset(clinical_ucgenome)
+clinical_ucgenome_2 <- make_binary_response_dataset(clinical_ucgenome_2)
+p3a <- my_combination_survival_plot(clinical_ucgenome_2, "UC-GENOME")
+p3b <- bar_plot_by_combination(clinical_ucgenome_2)
+	
 
   ### Plotting
   pA <- grid.arrange(
