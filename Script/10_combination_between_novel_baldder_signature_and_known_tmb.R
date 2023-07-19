@@ -14,43 +14,6 @@ source("Script/Functions/func_clinical_relevance.R")
 
 
 
-add_gene_exp <- function(log_dataset, dataset) {
-	genes <- c("SSR4", "RGS1", "HLA-DRB5", "APOE", "C1QB", "C1QA", "APOC1", "JCHAIN", "C1QC", "DERL3")
-	if (all(c("JCHAIN", "HLA-DRB5") %in% rownames(log_dataset))) {
-		a <- log_dataset[genes, dataset$ID]
-		a <- t(a)
-	} else {
-		if ("JCHAIN" %in% rownames(log_dataset)) {
-			genes <- gsub("HLA-DRB5", "HLA.DRB5", genes)
-			a <- log_dataset[genes, dataset$ID]
-			a <- t(a)
-		} else if ("HLA-DRB5" %in% rownames(log_dataset)) {
-			genes <- gsub("JCHAIN", "IGJ", genes)
-			a <- log_dataset[genes, dataset$ID]
-			a <- t(a)
-		} else {
-			genes <- gsub("JCHAIN", "IGJ", genes)
-			load("~/ANALYSIS/singlecell/RESULT/FIGURES/FIG3/imvigor210core_fdata.RData")
-			a <- log_dataset[fdata[fdata$Symbol %in% genes,]$entrez_id, dataset$ID]
-			a <- t(a)
-			colnames(a) <- fdata[fdata$entrez_id %in% colnames(a),]$Symbol
-		}
-			
-	}
-	pid <- rownames(a)
-	a <- as.data.frame(a)
-	a$ID <- pid
-
-	dataset <- merge(dataset, a, by = "ID")
-	return(dataset)
-	}
-	
-#clinical_gse176307 <- add_gene_exp(log_dataset_gse176307, clinical_gse176307)
-#clinical_imvigor210core <- add_gene_exp(log_dataset_imvigor210core, clinical_imvigor210core)
-#clinical_ucgenome <- add_gene_exp(log_dataset_ucgenome, clinical_ucgenome)
-
-	
-
 ### 02. Load data
 load(paste0(indir,"clinical_gse176307.RData"))
 load(paste0(indir,"clinical_imvigor210core.RData"))
