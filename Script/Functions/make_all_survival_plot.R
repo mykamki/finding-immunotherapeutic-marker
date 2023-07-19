@@ -1,4 +1,5 @@
-make_all_survival_plot <- function() {
+make_all_survival_plot <- function(clinical_gse176307, clinical_imvigor210core, clinical_ucgenome) 
+{
   qa1 <- my_HH_survival_plot(clinical_gse176307, "")
   qa2 <- my_LH_survival_plot(clinical_gse176307, "")
   qa3 <- my_HL_survival_plot(clinical_gse176307, "")
