@@ -133,3 +133,23 @@ extract_legend <- function(my_ggp) {
 }
 
 			
+
+my_anno_plot <- function(mylabel, fontsize = 6) {
+data <- as.data.frame(matrix(seq(1,20), nrow =4))
+# Create the plot with modified axis settings
+ggplot(data, aes(x = V1, y = V2)) + xlab("") +
+  theme(
+    axis.line.x.top = element_line(colour = "white"), 
+    axis.line.y.left = element_line(colour = "white"), 
+    axis.line.y.right = element_line(colour = "white"), 
+    axis.line.x.bottom = element_line(colour = "black"), 
+    axis.text.y = element_blank(),  # Hide y-axis labelsgeomgegg
+    axis.ticks.y = element_blank(),  # Hide y-axis ticks
+    axis.title.y = element_blank(),  # Hide y-axis title
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "white")
+  ) +
+  scale_x_continuous(breaks = NULL) + # Hide x-axis ticks
+geom_text(aes(x = 2, y = 4.5), label = mylabel, size=fontsize)
+}
