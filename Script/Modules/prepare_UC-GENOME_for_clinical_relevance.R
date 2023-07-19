@@ -111,6 +111,9 @@ if (identical(clinical_ucgenome$ID, colnames(log_dataset_ucgenome))) {
   log_dataset_ucgenome <- log_dataset_ucgenome[,clinical_ucgenome$ID]
   }
 mygene <- gsub("-",".", mygene, fixed = T)
+
+
+
 res2 <- apply(log_dataset_ucgenome[rownames(log_dataset_ucgenome) %in% mygene,] , 2, mean)
 sumgsig <- summary(res2)
 names(res2)[which(res2<sumgsig[3])] -> low # low ID
