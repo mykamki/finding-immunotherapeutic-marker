@@ -153,3 +153,50 @@ ggplot(data, aes(x = V1, y = V2)) + xlab("") +
   scale_x_continuous(breaks = NULL) + # Hide x-axis ticks
 geom_text(aes(x = 2, y = 4.5), label = mylabel, size=fontsize)
 }
+
+
+my_HH_survival_plot <- function(dataset, datasettitle) {
+	dataset <- dataset %>% filter(Combination_Signature_TMB %in% c("HH", "LL"))
+	fit1 <- survfit(Surv(time = time , event = status )~ Combination_Signature_TMB , data = dataset)
+	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
+                   title= datasettitle, legend = "right",
+		   palette = c("#F8766D", "#C77CFF"),
+                   ggtheme=custom_theme(), tables.height = 0.1,
+                   tables.theme = theme_cleantable(), fontsize = 3, 
+                   risk.table.y.text.col = T, # colour risk table text annotations.
+                   risk.table.y.text = F, # show bars instead of names in text annotations
+                   #legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
+                )
+}
+
+my_LH_survival_plot <- function(dataset, datasettitle) {
+	dataset <- dataset %>% filter(Combination_Signature_TMB %in% c("LH", "LL"))
+	fit1 <- survfit(Surv(time = time , event = status )~ Combination_Signature_TMB , data = dataset)
+	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
+                   title= datasettitle, legend = "right",
+		   palette = c("#00BFC4", "#C77CFF"),
+                   ggtheme=custom_theme(), tables.height = 0.1,
+                   tables.theme = theme_cleantable(), fontsize = 3, 
+                   risk.table.y.text.col = T, # colour risk table text annotations.
+                   risk.table.y.text = F, # show bars instead of names in text annotations
+                   #legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
+                )
+}
+
+my_HL_survival_plot <- function(dataset, datasettitle) {
+	dataset <- dataset %>% filter(Combination_Signature_TMB %in% c("HL", "LL"))
+	fit1 <- survfit(Surv(time = time , event = status )~ Combination_Signature_TMB , data = dataset)
+	ggsurvplot(fit1, data = dataset, pval = T, pval.size =6, risk.table= T, 
+                   title= datasettitle, legend = "right",
+		   palette = c("#7CAE00", "#C77CFF"),
+                   ggtheme=custom_theme(), tables.height = 0.1,
+                   tables.theme = theme_cleantable(), fontsize = 3, 
+                   risk.table.y.text.col = T, # colour risk table text annotations.
+                   risk.table.y.text = F, # show bars instead of names in text annotations
+                   #legend.labs = expression("Signature[High]", "Signature[Low]")  # Change legend labels
+                )
+}
+
+
+
+
