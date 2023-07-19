@@ -59,23 +59,12 @@ mygene <- c("SSR4", "RGS1" ,"HLA-DRB5", "APOE", "C1QB",  "C1QA",  "APOC1",  "IGJ
 #fData(cds)[fData(cds)$Symbol %in% mygene,]$entrez_id
 log_dataset_imvigor210core <- log_dataset[rownames(log_dataset) %in% fData(cds)[fData(cds)$Symbol %in% mygene,]$entrez_id,pid]
 log_dataset_imvigor210core <- apply(log_dataset_imvigor210core, 1, zscore_transform)
-log_dataset_imvigor210core <- t(log_dataset_imvigor210core)		 
+log_dataset_imvigor210core <- t(log_dataset_imvigor210core)
+rownames(log_dataset_imvigor210core) <- fData(cds)[fData(cds)$entrez_id %in% rownames(log_dataset_imvigor210core) ,]$Symbol
 		 
 ### ...04-3. calculate novel bladder signature		 
-res2 <- apply(log_dataset_imvigor210core,2,mean)
-sumgsig <- summary(res2)
-names(res2)[which(res2<sumgsig[3])] -> low # low ID
-names(res2)[which(res2>=sumgsig[3])] -> high # high ID
-
-### ... 04-2. Divide group 
-clinical_imvigor210core <- clinical_imvigor210core %>% mutate(Novel_Signature = ifelse(ID %in% high, "High", "Low"))
-clinical_imvigor210core$Novel_Signature <- factor(clinical_imvigor210core$Novel_Signature)
-
-if (identical(clinical_imvigor210core$ID, names(res2))) {
-	clinical_imvigor210core$Novel_Signature_score <- res2
-} else {
-	res2 <- res2[clinical_imvigor210core$ID]
-	clinical_imvigor210core$Novel_Signature_score <- res2
+if (rownames(log_dataset_imvigor210core) %in% mygene %>% sum() == 10) {
+	clinical_imvigor210core <- make_genesignature(clinical_imvigor210core, log_dataset_imvigor210core)
 }
 
 		 
