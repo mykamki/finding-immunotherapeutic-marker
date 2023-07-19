@@ -113,15 +113,10 @@ if (identical(clinical_ucgenome$ID, colnames(log_dataset_ucgenome))) {
 mygene <- gsub("-",".", mygene, fixed = T)
 
 ###... 04-4. Divide patients
-if (rownames(log_dataset_ucgenome) %in% mygene %>% sum() == 10) {
-	clinical_ucgenome <- make_genesignature(clinical_ucgenome, log_dataset_ucgenome)
-}
-
-
-log_dataset_ucgenome2 <- apply(log_dataset_ucgenome, 1, zscore_transform)
-log_dataset_ucgenome2 <- t(log_dataset_ucgenome2)
+log_dataset_ucgenome <- apply(log_dataset_ucgenome, 1, zscore_transform)
+log_dataset_ucgenome <- t(log_dataset_ucgenome)
 if (rownames(log_dataset_ucgenome2) %in% mygene %>% sum() == 10) {
-	clinical_ucgenome2 <- make_genesignature(clinical_ucgenome, log_dataset_ucgenome2)
+	clinical_ucgenome <- make_genesignature(clinical_ucgenome, log_dataset_ucgenome)
 }
 
 		 
