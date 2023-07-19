@@ -39,21 +39,21 @@ p3b <- bar_plot_by_gene(clinical_ucgenome)
 
 
 ### 06. Survival relevance and ICB response of known TMB in GSE176307
-clinical_gse176307 <- make_tmb_group_dataset(clinical_gse176307)
-q1a <- my_tmb_survival_plot(clinical_gse176307, "GSE176307")
-q1b <- bar_plot_by_tmb(clinical_gse176307)
+clinical_gse176307_2 <- make_tmb_group_dataset(clinical_gse176307)
+q1a <- my_tmb_survival_plot(clinical_gse176307_2, "GSE176307")
+q1b <- bar_plot_by_tmb(clinical_gse176307_2)
 
 
 ### 07. Survival relevance and ICB response of known TMB in IMvigor210
-clinical_imvigor210core <- make_tmb_group_dataset(clinical_imvigor210core)
-q2a <- my_tmb_survival_plot(clinical_imvigor210core, "IMvigor210")
-q2b <- bar_plot_by_tmb(clinical_imvigor210core)
+clinical_imvigor210core_2 <- make_tmb_group_dataset(clinical_imvigor210core)
+q2a <- my_tmb_survival_plot(clinical_imvigor210core_2, "IMvigor210")
+q2b <- bar_plot_by_tmb(clinical_imvigor210core_2)
 
 
 ### 08. Survival relevance and ICB response of known TMB in UC-GENOME
-clinical_ucgenome <- make_tmb_group_dataset(clinical_ucgenome)
-q3a <- my_tmb_survival_plot(clinical_ucgenome, "UC-GENOME")
-q3b <- bar_plot_by_tmb(clinical_ucgenome)
+clinical_ucgenome_2 <- make_tmb_group_dataset(clinical_ucgenome)
+q3a <- my_tmb_survival_plot(clinical_ucgenome_2, "UC-GENOME")
+q3b <- bar_plot_by_tmb(clinical_ucgenome_2)
 
 
 ### 09. Plotting
