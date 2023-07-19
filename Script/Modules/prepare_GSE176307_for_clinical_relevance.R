@@ -1,6 +1,7 @@
 ### 01. Setiing
 library(limma)
 library(dplyr)
+library(purrr)
 indir <- args[1]
 outdir <- args[2]
 
