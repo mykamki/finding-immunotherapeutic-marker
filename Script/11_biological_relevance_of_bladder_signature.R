@@ -3,9 +3,12 @@
 library(ComplexHeatmap)
 library(circlize)
 library(dplyr)
+library(limma)
+source("Script/Functions/func_preprocessing.R")
 
 
 ### 02. Load pathway gene list
+load(file = paste0(indir, "bulk_dataset.RData"))
 path.genes <- read.csv("/storage/home/mina_20/ANALYSIS/singlecell/analysis_script/15_IMvgor210/path.genes.csv", header = T)
 path.genes$group <- gsub("Immune_checkpoint", "CheckPoint", path.genes$group)
 path.genes$group <- gsub("Cell_cycle", "cellcycle", path.genes$group)
@@ -27,12 +30,10 @@ ha1 = HeatmapAnnotation(df = anno,
 
 
 ### 04. make heatmap matrix
-myz <- function(x) {
-	(x-mean(x))/sd(x)
-}
-
-mat <- log_dataset_gse176307[rownames(log_dataset_gse176307) %in% path.genes$gene,]
-mat <- apply(mat,1, myz)
+v <- voom(bulk_dataset)
+log_dataset <- v$E
+mat <- log_dataset[rownames(log_dataset) %in% path.genes$gene,]
+mat <- apply(mat, 1, zscore_transform)
 mat <- t(mat)
 
 if (identical(cl$ID, colnames(mat))) {
@@ -61,6 +62,34 @@ png(paste0(outdir, "heatmap.png"),width = 500, height = 850); draw(ht_list, ht_g
 
 
 ### 06. T-test for pathway
+for (n in 1:length(unique(path.genes$group))) {
+    path <- unique(path.genes$group)[n]
+    submat <- mat[rownames(mat) %in% path.genes[path.genes$group == path,]$gene,]
+
+    #high_novel_gene_signature <- apply(submat[,colnames(submat) %in% cl[cl$Novel_Signature == "High",]$ID], 2, mean)
+    #low_novel_gene_signature <- apply(submat[,colnames(submat) %in% cl[cl$Novel_Signature == "Low",]$ID], 2, mean)
+   
+    #high_known_tmb <- apply(submat[,colnames(submat) %in% cl[cl$Known_TMB == "High",]$ID], 2, mean)
+    #low_known_tmb <- apply(submat[,colnames(submat) %in% cl[cl$Known_TMB == "Low",]$ID], 2, mean)
+
+    hhgroup <- apply(submat[,colnames(submat) %in% cl[cl$Novel_Signature == "High" & cl$Known_TMB == "High",]$ID], 2, mean)
+    hlgroup <- apply(submat[,colnames(submat) %in% cl[cl$Novel_Signature == "High" & cl$Known_TMB == "Low",]$ID], 2, mean)
+    lhgroup <- apply(submat[,colnames(submat) %in% cl[cl$Novel_Signature == "Low" & cl$Known_TMB == "High",]$ID], 2, mean)
+    llgroup <- apply(submat[,colnames(submat) %in% cl[cl$Novel_Signature == "Low" & cl$Known_TMB == "Low",]$ID], 2, mean)
+
+    print(path)
+    df <- data.frame(c(hhgroup, hlgroup, lhgroup, llgroup), c(rep("hh",length(hhgroup)), rep("hl",length(hlgroup)), rep("lh",length(lhgroup)), rep("ll",length(llgroup))))
+    colnames(df) <- c("value", "group")
+    df %>% mutate(group = group %>% as.factor()) %>% 
+ 	 aov(value ~ group, data = .)  %>% summary() %>% print()
+    df %>% mutate(group = group %>% as.factor()) %>% 
+ 	 aov(value ~ group, data = .)  %>% TukeyHSD() %>% print()
+    
+    #t.test(high_novel_gene_signature, low_novel_gene_signature) %>% print()
+    #t.test(high_known_tmb, low_known_tmb) %>% print()
+
+}
+
 for (n in 1:length(unique(path.genes$group))) {
     path <- unique(path.genes$group)[n]
     submat <- mat[rownames(mat) %in% path.genes[path.genes$group == path,]$gene,]
