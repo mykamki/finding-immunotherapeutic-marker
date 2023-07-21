@@ -62,6 +62,7 @@ png(paste0(outdir, "heatmap.png"),width = 500, height = 850); draw(ht_list, ht_g
 
 
 ### 06. T-test for pathway
+res <- data.frame()
 for (n in 1:length(unique(path.genes$group))) {
     path <- unique(path.genes$group)[n]
     submat <- mat[rownames(mat) %in% path.genes[path.genes$group == path,]$gene,]
@@ -81,10 +82,13 @@ for (n in 1:length(unique(path.genes$group))) {
     df <- data.frame(c(hhgroup, hlgroup, lhgroup, llgroup), c(rep("hh",length(hhgroup)), rep("hl",length(hlgroup)), rep("lh",length(lhgroup)), rep("ll",length(llgroup))))
     colnames(df) <- c("value", "group")
     df %>% mutate(group = group %>% as.factor()) %>% 
- 	 aov(value ~ group, data = .)  %>% summary() %>% print()
+ 	 aov(value ~ group, data = .)  %>% summary() -> asu
     df %>% mutate(group = group %>% as.factor()) %>% 
- 	 aov(value ~ group, data = .)  %>% TukeyHSD() %>% print()
-    
+ 	 aov(value ~ group, data = .)  %>% TukeyHSD() -> tuk
+    	res[n,1] <- path
+	res[n,2] <- asu[[1]][5][1,1]
+	res[n,3:8] <- tuk$group[,4] %>% as.vector()
+	colnames(res) <- c("path","pvalue","hl-hh", "lh-hh", "ll-hh", "lh-hl", "ll-hl", "ll-lh")
     #t.test(high_novel_gene_signature, low_novel_gene_signature) %>% print()
     #t.test(high_known_tmb, low_known_tmb) %>% print()
 
@@ -100,9 +104,9 @@ for (n in 1:length(unique(path.genes$group))) {
     high_known_tmb <- apply(submat[,colnames(submat) %in% cl[cl$Known_TMB == "High",]$ID], 2, mean)
     low_known_tmb <- apply(submat[,colnames(submat) %in% cl[cl$Known_TMB == "Low",]$ID], 2, mean)
 
-    #print(path)
-    #t.test(high_novel_gene_signature, low_novel_gene_signature) %>% print()
-    #t.test(high_known_tmb, low_known_tmb) %>% print()
+    print(path)
+    t.test(high_novel_gene_signature, low_novel_gene_signature) %>% print()
+    t.test(high_known_tmb, low_known_tmb) %>% print()
 
     df <- data.frame(value = c(high_novel_gene_signature, low_novel_gene_signature, high_known_tmb, low_known_tmb),
                  marker = c(rep("Novel gene signature", length(high_novel_gene_signature)+length(low_novel_gene_signature)),
@@ -116,6 +120,28 @@ for (n in 1:length(unique(path.genes$group))) {
     assign(paste0("bx",n), genepath_boxplot(df))  
   
   }
+
+tres <- data.frame()
+for (n in 1:length(unique(path.genes$group))) {
+    path <- unique(path.genes$group)[n]
+    submat <- mat[rownames(mat) %in% path.genes[path.genes$group == path,]$gene,]
+
+    high_novel_gene_signature <- apply(submat[,colnames(submat) %in% cl[cl$Novel_Signature == "High",]$ID], 2, mean)
+    low_novel_gene_signature <- apply(submat[,colnames(submat) %in% cl[cl$Novel_Signature == "Low",]$ID], 2, mean)
+   
+    high_known_tmb <- apply(submat[,colnames(submat) %in% cl[cl$Known_TMB == "High",]$ID], 2, mean)
+    low_known_tmb <- apply(submat[,colnames(submat) %in% cl[cl$Known_TMB == "Low",]$ID], 2, mean)
+
+    print(path)
+    t.test(high_novel_gene_signature, low_novel_gene_signature) -> gt
+    t.test(high_known_tmb, low_known_tmb) -> tt
+	tres[n,1] <- path
+	tres[n,2:3] <- gt$estimate
+	tres[n,4] <- gt$p.value
+	tres[n,5:6] <- tt$estimate
+	tres[n,7] <- tt$p.value
+  }
+
 
 genepath_boxplot <- function(data) {
   ggplot(data, aes(x=group, y=value, fill=group)) +
